@@ -1,5 +1,7 @@
 The PKNCA R Package
-=====
+====================
+
+Travis-CI is used for continous integragation: [![Build Status](https://travis-ci.org/TiO2/pknca.svg?branch=master)](https://travis-ci.org/TiO2/pknca)
 
 The PKNCA R package is designed to perform all noncompartmental
 analysis (NCA) calculations for pharmacokinetic (PK) data.  The
