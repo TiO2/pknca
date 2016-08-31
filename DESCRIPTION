@@ -16,7 +16,8 @@ Imports:
     lattice,
     stats,
     tidyr,
-    utils
+    utils,
+    roxygen2
 Suggests:
     dplyr,
     knitr,
