@@ -11,6 +11,7 @@
 #' \code{AIC}.  If \code{assess.best} is true, then there will be
 #' another column \code{isBest}.
 #' @export
+#' @importFrom stats AIC logLik
 AIC.list <- function(object, ..., assess.best=TRUE) {
   allAICs <-
     lapply(object, FUN=function(subobject, ...) {
@@ -27,7 +28,7 @@ AIC.list <- function(object, ..., assess.best=TRUE) {
           if ("indentation" %in% names(ret)) {
             ret$indentation <- ret$indentation + 1
           } else {
-            stop("Unknown way to get a data.frame without indentation set.  This is likely a bug.")
+            stop("Unknown way to get a data.frame without indentation set.  This is likely a bug.") # nocov
           }
         }
       }
@@ -70,8 +71,10 @@ AIC.list <- function(object, ..., assess.best=TRUE) {
 #' @return The model which is assessed as best.  If more than one are
 #' equal, the first is chosen.
 #' @export
-get.best.model <- function(object, ...)
+#' @importFrom stats AIC
+get.best.model <- function(object, ...) {
   object[stats::AIC(object, ...)$isBest %in% "Best Model"][[1]]
+}
 
 #' Get the first model from a list of models
 #'

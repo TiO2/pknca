@@ -21,10 +21,12 @@
 pk.tss.data.prep <- function(conc, time, subject, treatment,
                              subject.dosing, time.dosing,
                              options=list(),
-                             conc.blq=PKNCA.choose.option("conc.blq", options),
-                             conc.na=PKNCA.choose.option("conc.na", options),
+                             conc.blq=NULL,
+                             conc.na=NULL,
                              check=TRUE, ...) {
   ## Check inputs
+  conc.blq <- PKNCA.choose.option(name="conc.blq", value=conc.blq, options=options)
+  conc.na <- PKNCA.choose.option(name="conc.na", value=conc.na, options=options)
   if (check) {
     ## When subject and time are given, then monotonicity tests for
     ## time are not required.
@@ -58,8 +60,12 @@ pk.tss.data.prep <- function(conc, time, subject, treatment,
     ## Shrink the data to just the predose data
     ret <- subset(ret, time %in% time.dosing)
   } else {
-    dosing <- data.frame(subject=subject.dosing,
-                         time=time.dosing)
+    dosing <-
+      data.frame(
+        subject=subject.dosing,
+        time=time.dosing,
+        stringsAsFactors=FALSE
+      )
     ## Shrink the data to just the predose data (by subject)
     ret <- merge(ret, dosing)
   }
@@ -69,8 +75,10 @@ pk.tss.data.prep <- function(conc, time, subject, treatment,
       ## Drop the "subject" column from single-subject data
       ret$subject <- NULL
     } else if (!is.factor(ret$subject)) {
-      ## Make sure that it is a factor otherwise
-      ret$subject <- factor(ret$subject)
+      ## Make sure that it is a factor made from a character vector because the
+      ## output subject numbering will come from row.names of the random
+      ## effects.
+      ret$subject <- factor(as.character(ret$subject))
     }
   }
   if ("treatment" %in% names(ret)) {
@@ -94,8 +102,7 @@ pk.tss.data.prep <- function(conc, time, subject, treatment,
 #' \code{stepwise.linear} or \code{monoexponential}
 #' @return A data frame with columns as defined from
 #' \code{pk.tss.monoexponential} and/or \code{pk.tss.stepwise.linear}.
-#' @seealso \code{\link{pk.tss.monoexponential}},
-#' \code{\link{pk.tss.stepwise.linear}}
+#' @family Time to steady-state calculations
 #' @export
 pk.tss <- function(...,
                    type=c("monoexponential", "stepwise.linear"),
@@ -103,22 +110,22 @@ pk.tss <- function(...,
   type <- match.arg(type, several.ok=TRUE)
   ret <- NA
   if ("monoexponential" %in% type) {
-    tmp <- pk.tss.monoexponential(..., check=check)
+    ret_monoexponential <- pk.tss.monoexponential(..., check=check)
     if (identical(NA, ret)) {
-      ret <- tmp
+      ret <- ret_monoexponential
     } else {
-      stop("Bug in pk.tss where ret is set to non-NA too early")
+      stop("Bug in pk.tss where ret is set to non-NA too early.  Please report the bug with a reproducible example.") # nocov
     }
     ## Set check to FALSE if it has already been checked (so that it
     ## doesn't happen again in stepwise.linear)
     check <- FALSE
   }
   if ("stepwise.linear" %in% type) {
-    tmp <- pk.tss.stepwise.linear(..., check=check)
+    ret_stepwise <- pk.tss.stepwise.linear(..., check=check)
     if (identical(NA, ret)) {
-      ret <- tmp
+      ret <- ret_stepwise
     } else {
-      ret <- merge(ret, tmp, all=TRUE)
+      ret <- merge(ret, ret_stepwise, all=TRUE)
     }
   }
   ret

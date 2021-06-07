@@ -2,9 +2,9 @@
 % Please edit documentation in R/class-PKNCAdose.R
 \name{PKNCAdose}
 \alias{PKNCAdose}
-\alias{PKNCAdose.data.frame}
 \alias{PKNCAdose.default}
 \alias{PKNCAdose.tbl_df}
+\alias{PKNCAdose.data.frame}
 \title{Create a PKNCAdose object}
 \usage{
 PKNCAdose(data, ...)
@@ -13,8 +13,7 @@ PKNCAdose(data, ...)
 
 \method{PKNCAdose}{tbl_df}(data, ...)
 
-\method{PKNCAdose}{data.frame}(data, formula, route, rate, duration, labels,
-  units, ...)
+\method{PKNCAdose}{data.frame}(data, formula, route, rate, duration, time.nominal, exclude, ...)
 }
 \arguments{
 \item{data}{A data frame with time and the groups defined in 
@@ -42,13 +41,15 @@ if neither is given, then the dose is assumed to be a bolus
 (\code{duration=0}).  If \code{rate} is given, then the dose amount
 must be given (the left hand side of the \code{formula}).}
 
-\item{labels}{(optional) Labels for use when plotting.  They are a 
-named list where the names correspond to the names in the data 
-frame and the values are used for xlab and/or ylab as appropriate.}
+\item{time.nominal}{(optional) The name of the nominal time column
+(if the main time variable is actual time.  The \code{time.nominal}
+is not used during calculations; it is available to assist with
+data summary and checking.}
 
-\item{units}{(optional) Units for use when plotting and calculating 
-parameters.  Note that unit conversions and simplifications are not
-done; the text is used as-is.}
+\item{exclude}{(optional) The name of a column with concentrations to
+exclude from calculations and summarization.  If given, the column 
+should have values of \code{NA} or \code{""} for concentrations to
+include and non-empty text for concentrations to exclude.}
 }
 \value{
 A PKNCAconc object that can be used for automated NCA.
@@ -73,6 +74,9 @@ The \code{formula} for a \code{PKNCAdose} object can be
   formula
 }
 \seealso{
-\code{\link{PKNCAconc}}, \code{\link{PKNCAdata}}
+Other PKNCA objects: 
+\code{\link{PKNCAconc}()},
+\code{\link{PKNCAdata}()},
+\code{\link{PKNCAresults}()}
 }
-
+\concept{PKNCA objects}

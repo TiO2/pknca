@@ -2,15 +2,34 @@
 % Please edit documentation in R/general.functions.R
 \name{signifString}
 \alias{signifString}
+\alias{signifString.data.frame}
+\alias{signifString.default}
 \title{Round a value to a defined number of significant digits printing out trailing
 zeros, if applicable.}
 \usage{
-signifString(x, digits = 6)
+signifString(x, ...)
+
+\method{signifString}{data.frame}(x, ...)
+
+\method{signifString}{default}(x, digits = 6, sci_range = 6, sci_sep = "e", si_range, ...)
 }
 \arguments{
 \item{x}{The number to round}
 
+\item{...}{Arguments passed to methods.}
+
 \item{digits}{integer indicating the number of significant digits}
+
+\item{sci_range}{integer (or \code{Inf}) indicating when to switch to
+scientific notation instead of floating point. Zero indicates always use
+scientific; \code{Inf} indicates to never use scientific notation;
+otherwise, scientific notation is used when \code{abs(log10(x)) > si_range}.}
+
+\item{sci_sep}{The separator to use for scientific notation strings
+(typically this will be either "e" or "x10^" for computer- or
+human-readable output).}
+
+\item{si_range}{Deprecated, please use \code{sci_range}}
 }
 \value{
 A string with the value
@@ -26,4 +45,3 @@ Values that are not standard numbers like \code{Inf}, \code{NA}, and
 \seealso{
 \code{\link{signif}}, \code{\link{roundString}}
 }
-

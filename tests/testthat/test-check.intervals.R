@@ -11,6 +11,9 @@ test_that(
                      end=1,
                      stringsAsFactors=FALSE)
     r1[,setdiff(nameorder, names(r1))] <- FALSE
+    expect_warning(check.interval.specification(as.matrix(d1)),
+                   regexp="Interval specification must be a data.frame",
+                   info="Interval must be a data.frame or coercable into a data frame")
     expect_warning(d1.check <- check.interval.specification(d1),
                    regexp="Nothing to be calculated in interval specification number\\(s\\): 1",
                    info="Warn if nothing is to be calculated in an interval specification")
@@ -131,11 +134,90 @@ test_that("check.interval.deps", {
 
   r1 <- data.frame(start=0,
                    end=24,
-                   half.life=TRUE,
+                   lambda.z=TRUE,
                    clast.obs=TRUE,
                    aucinf.obs=TRUE)
   r1[,setdiff(nameorder, names(r1))] <- FALSE
   expect_equal(check.interval.deps(data.frame(start=0, end=24, aucinf.obs=TRUE)),
                r1[,nameorder],
                info="Confirm that the interval dependencies are accurately added")
+})
+
+test_that("get.parameter.deps", {
+  expect_error(
+    get.parameter.deps("foo"),
+    regexp="`x` must be the name of an NCA parameter listed by the function `get.interval.cols()`",
+    info="The argument must be a parameter.",
+    fixed=TRUE
+  )
+  expect_equal(
+    get.parameter.deps("kel.obs"),
+    c("kel.obs"),
+    info="Parameters that have nothing that depend on them return themselves only."
+  )
+  expect_equal(
+    get.parameter.deps("ctrough"),
+    c("ctrough", "ctrough.dn", "ptr"),
+    info="Parameters with formalsmap-related dependencies return themselves and the formalsmap-related dependencies."
+  )
+  expect_equal(
+    get.parameter.deps("start"),
+    character(0),
+    info="Special columns that are not actually parameters have no dependencies (including themselves)."
+  )
+  expect_equal(
+    get.parameter.deps("cl.obs"),
+    c("cl.obs", "vss.iv.obs", "vss.obs", "vz.obs"),
+    info="Parameters with dependencies return them."
+  )
+})
+
+test_that("check.intervals requires a valid value", {
+  expect_error(
+    check.interval.specification(data.frame(start=0, end=1, cmax="A")),
+    regexp="Invalid value(s) in column cmax:A",
+    fixed=TRUE
+  )
+})
+
+test_that("check.intervals works with tibble input (fix #141)", {
+  e.dat <-
+    data.frame(
+      conc=c(0.5,2,5,9.2,12,2,1.85,1.08,0.5,0.3,2.4,4.5,10.2,15,2.6,1.65,1.1,
+             0.5,2,5,9.2,12,2,1.85,1.08,NA,0.3,2.4,4.5,10.2,15,2.6,1.65,1.1),
+      time=c(seq(264.2,312.2,3),seq(264,312,3)),
+      ARM=rep(c(rep(1,8),rep(2,9)),2),
+      SUBJ=c(rep(1,17),rep(2,17)),
+      Dose=c(rep(5,17)),rep(5,17)
+    )
+  
+  intervals_manual_first <-
+    e.dat %>%
+    dplyr::group_by(SUBJ) %>%
+    dplyr::summarize(
+      start=time[dplyr::between(time, 264, 265)],
+      end=time[dplyr::between(time, 288, 289)]
+    )
+  intervals_manual_second <-
+    e.dat %>%
+    dplyr::group_by(SUBJ) %>%
+    dplyr::summarize(
+      start=time[dplyr::between(time, 288, 289)],
+      end=time[dplyr::between(time, 312, 313)]
+    )
+  intervals_manual <-
+    dplyr::bind_rows(
+      intervals_manual_first,
+      intervals_manual_second
+    ) %>%
+    dplyr::mutate(
+      auclast=TRUE,
+      aucall=TRUE,
+      tlast=TRUE
+    )
+  # There is some other issue here where intervals are having an issue being a tibble
+  expect_equal(
+    check.interval.specification(intervals_manual)$start,
+    intervals_manual$start
+  )
 })

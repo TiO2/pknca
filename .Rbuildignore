@@ -1,0 +1,15 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+cran-comments.md
+^\.github$
+^LICENSE\.md$
+^CODE_OF_CONDUCT\.md$
+^doc$
+^Meta$
+^codecov\.yml$
+^CRAN-RELEASE$
+^cran-comments\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

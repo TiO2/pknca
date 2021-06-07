@@ -47,21 +47,35 @@ test_that("clean.conc.na", {
 
   ## Additional arguments are returned into the data frame and
   ## filtered if NA conc goes with them.
-  expect_equal(clean.conc.na(conc=1:3,
-                             time=1:3,
-                             extra=c("a", "b", "c"),
-                             conc.na="drop"),
-               data.frame(conc=1:3,
-                          time=1:3,
-                          extra=c("a", "b", "c")))
-  expect_equal(clean.conc.na(conc=c(1, NA, 2),
-                             time=1:3,
-                             extra=c("a", "b", "c"),
-                             conc.na="drop"),
-               data.frame(conc=1:2,
-                          time=c(1, 3),
-                          extra=c("a", "c")),
-               check.attributes=FALSE)
+  expect_equal(
+    clean.conc.na(
+      conc=1:3,
+      time=1:3,
+      extra=c("a", "b", "c"),
+      conc.na="drop"
+    ),
+    data.frame(
+      conc=1:3,
+      time=1:3,
+      extra=c("a", "b", "c"),
+      stringsAsFactors=FALSE
+    )
+  )
+  expect_equal(
+    clean.conc.na(
+      conc=c(1, NA, 2),
+      time=1:3,
+      extra=c("a", "b", "c"),
+      conc.na="drop"
+    ),
+    data.frame(
+      conc=1:2,
+      time=c(1, 3),
+      extra=c("a", "c"),
+      stringsAsFactors=FALSE
+    ),
+    check.attributes=FALSE
+  )
 })
 
 test_that("clean.conc.blq", {
@@ -160,10 +174,22 @@ test_that("clean.conc.blq", {
 
   d.test <- data.frame(conc=c(1, 0, 2), time=1:3)
   d.result <- data.frame(conc=c(1, 0.5, 2), time=1:3)
-  expect_equal(clean.conc.blq(d.test$conc, d.test$time,
-                                conc.blq=0.5, conc.na="drop"),
-               d.result)
-
+  expect_equal(
+    clean.conc.blq(
+      d.test$conc, d.test$time,
+      conc.blq=0.5, conc.na="drop"
+    ),
+    d.result
+  )
+  expect_equal(
+    clean.conc.blq(
+      d.test$conc, d.test$time,
+      conc.blq=list(first=0, middle=0.5, last=0), conc.na="drop"
+    ),
+    d.result,
+    info="fix related item to #145"
+  )
+  
   ## If there are BLQ values at the beginning, middle, and end, it
   ## only drops all of them or drops them selectively as instructed.
   d.test <- data.frame(conc=c(0, 1, 0, 2, 0), time=1:5)

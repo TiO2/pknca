@@ -19,12 +19,14 @@
 #'   if neither is given, then the dose is assumed to be a bolus 
 #'   (\code{duration=0}).  If \code{rate} is given, then the dose amount
 #'   must be given (the left hand side of the \code{formula}).
-#' @param labels (optional) Labels for use when plotting.  They are a 
-#'   named list where the names correspond to the names in the data 
-#'   frame and the values are used for xlab and/or ylab as appropriate.
-#' @param units (optional) Units for use when plotting and calculating 
-#'   parameters.  Note that unit conversions and simplifications are not
-#'   done; the text is used as-is.
+#' @param time.nominal (optional) The name of the nominal time column
+#'   (if the main time variable is actual time.  The \code{time.nominal}
+#'   is not used during calculations; it is available to assist with
+#'   data summary and checking.
+#' @param exclude (optional) The name of a column with concentrations to
+#'   exclude from calculations and summarization.  If given, the column 
+#'   should have values of \code{NA} or \code{""} for concentrations to
+#'   include and non-empty text for concentrations to exclude.
 #' @param ... Ignored.
 #' @return A PKNCAconc object that can be used for automated NCA.
 #' @details The \code{formula} for a \code{PKNCAdose} object can be 
@@ -41,7 +43,7 @@
 #'   per group.  When the right side is missing, PKNCA assumes that the 
 #'   same dose is given in every interval.  When given as a two-sided 
 #'   formula
-#' @seealso \code{\link{PKNCAconc}}, \code{\link{PKNCAdata}}
+#' @family PKNCA objects
 #' @export
 PKNCAdose <- function(data, ...)
   UseMethod("PKNCAdose")
@@ -58,7 +60,17 @@ PKNCAdose.tbl_df <- function(data, ...)
 #' @rdname PKNCAdose
 #' @export
 PKNCAdose.data.frame <- function(data, formula, route, rate, duration,
-                                 labels, units, ...) {
+                                 time.nominal, exclude, ...) {
+  ## The data must have... data
+  if (nrow(data) == 0) {
+    stop("data must have at least one row.")
+  }
+  ## Check inputs
+  if (!missing(time.nominal)) {
+    if (!(time.nominal %in% names(data))) {
+      stop("time.nominal, if given, must be a column name in the input data.")
+    }
+  }
   ## Verify that all the variables in the formula are columns in the
   ## data.
   parsedForm <- parseFormula(formula, require.two.sided=FALSE)
@@ -88,15 +100,15 @@ PKNCAdose.data.frame <- function(data, formula, route, rate, duration,
   ret <- list(data=data,
               formula=formula)
   class(ret) <- c("PKNCAdose", class(ret))
+  if (missing(exclude)) {
+    ret <- setExcludeColumn(ret)
+  } else {
+    ret <- setExcludeColumn(ret, exclude=exclude)
+  }
   mask.indep <- is.na(getIndepVar.PKNCAdose(ret))
   if (any(mask.indep) & !all(mask.indep)) {
     stop("Some but not all values are missing for the independent variable, please see the help for PKNCAdose for how to specify the formula and confirm that your data has dose times for all doses.")
   }
-  ## check and add labels and units
-  if (!missing(labels))
-    ret <- set.name.matching(ret, "labels", labels, data)
-  if (!missing(units))
-    ret <- set.name.matching(ret, "units", units, data)
   if (missing(route)) {
     ret <- setRoute.PKNCAdose(ret)
   } else {
@@ -104,6 +116,12 @@ PKNCAdose.data.frame <- function(data, formula, route, rate, duration,
   }
   ret <- setDuration.PKNCAdose(ret, duration=duration,
                                rate=rate, dose=getDepVar.PKNCAdose(ret))
+  if (!missing(time.nominal)) {
+    ret <-
+      setAttributeColumn(object=ret,
+                         attr_name="time.nominal",
+                         col_name=time.nominal)
+  }
   ret
 }
 
@@ -115,20 +133,29 @@ PKNCAdose.data.frame <- function(data, formula, route, rate, duration,
 #'   scalar indicating the route of administration for all subjects, or
 #'   a vector indicating the route of administration for each dose in
 #'   the dataset.
+#' @param ... Arguments passed to another setRoute function
 #' @return The object with an updated route
 #' @export
-setRoute <- function(object, ...)
+setRoute <- function(object, ...) {
   UseMethod("setRoute")
-setRoute.PKNCAdose <- function(object, route) {
+}
+#' @rdname setRoute
+#' @export
+setRoute.PKNCAdose <- function(object, route, ...) {
   if (missing(route)) {
-    message("Assuming route of administration is extravascular")
-    tmpval <- getColumnValueOrNot(object$data, "extravascular", "route")
+    object <-
+      setAttributeColumn(object=object,
+                         attr_name="route",
+                         default_value="extravascular",
+                         message_if_default="Assuming route of administration is extravascular")
   } else {
-    tmpval <- getColumnValueOrNot(object$data, route, "route")
+    object <-
+      setAttributeColumn(object=object,
+                         attr_name="route",
+                         col_or_value=route)
   }
-  object$data <- tmpval$data
-  object$route <- tmpval$name
-  if (!all(tolower(object$data[[object$route]]) %in% c("extravascular", "intravascular"))) {
+  if (!all(tolower(getAttributeColumn(object=object, attr_name="route")[[1]]) %in%
+           c("extravascular", "intravascular"))) {
     stop("route must have values of either 'extravascular' or 'intravascular'.  Please set to one of those values and retry.")
   }
   object
@@ -141,33 +168,36 @@ setRoute.PKNCAdose <- function(object, route) {
 #'   column in the data to use for the duration.
 #' @param rate (for PKNCAdose objects only) The rate of infusion
 #' @param dose (for PKNCAdose objects only) The dose amount
+#' @param ... Arguments passed to another setDuration function
 #' @return The object with duration set
 #' @export
 setDuration <- function(object, ...)
   UseMethod("setDuration")
+#' @rdname setDuration
+#' @export
 setDuration.PKNCAdose <- function(object, duration, rate, dose, ...) {
   if (missing(duration) & missing(rate)) {
-    message("Assuming instant dosing (duration=0)")
-    tmpval <- getColumnValueOrNot(object$data, 0, "duration")
+    object <- setAttributeColumn(object=object, attr_name="duration", default_value=0,
+                                 message_if_default="Assuming instant dosing (duration=0)")
+                                
   } else if (!missing(duration) & !missing(rate)) {
     stop("Both duration and rate cannot be given at the same time")
     # TODO: A consistency check could be done, but that would get into
     # requiring near-equal checks for floating point error.
   } else if (!missing(duration)) {
-    tmpval <- getColumnValueOrNot(object$data, duration, "duration")
+    object <- setAttributeColumn(object=object, attr_name="duration", col_or_value=duration)
   } else if (!missing(rate) & !missing(dose)) {
     tmprate <- getColumnValueOrNot(object$data, rate, "rate")
     tmpdose <- getColumnValueOrNot(object$data, dose, "dose")
     duration <- tmpdose$data[[tmpdose$name]]/tmprate$data[[tmprate$name]]
-    tmpval <- getColumnValueOrNot(object$data, duration, "duration")
+    object <- setAttributeColumn(object=object, attr_name="duration", col_or_value=duration)
   }
-  duration.val <- tmpval$data[[tmpval$name]]
+  duration.val <- getAttributeColumn(object=object, attr_name="duration")[[1]]
   if (is.numeric(duration.val) &&
       !any(is.na(duration.val)) &&
       !any(is.infinite(duration.val)) &&
       all(duration.val >= 0)) {
-    object$data <- tmpval$data
-    object$duration <- tmpval$name
+    # It passes
   } else {
     stop("duration must be numeric without missing (NA) or infinite values, and all values must be >= 0")
   }
@@ -176,12 +206,14 @@ setDuration.PKNCAdose <- function(object, duration, rate, dose, ...) {
 
 #' @rdname formula.PKNCAconc
 #' @export
+#' @importFrom stats formula
 formula.PKNCAdose <-  function(x, ...) {
   x$formula
 }
 
 #' @rdname model.frame.PKNCAconc
 #' @export
+#' @importFrom stats model.frame
 model.frame.PKNCAdose <- function(formula, ...) {
   cbind(getDepVar.PKNCAdose(formula),
         getIndepVar.PKNCAdose(formula),
@@ -218,40 +250,49 @@ getGroups.PKNCAdose <- function(...) {
 
 #' @rdname getData.PKNCAconc
 #' @export
+#' @importFrom nlme getData
 getData.PKNCAdose <-  function(object)
   object$data
 
+#' @rdname getDataName
+getDataName.PKNCAdose <- function(object)
+  "data"
+
 #' @rdname print.PKNCAconc
 #' @export
+#' @importFrom utils head
 print.PKNCAdose <- function(x, n=6, summarize=FALSE, ...) {
   cat("Formula for dosing:\n ")
-  print(stats::formula(x), ...)
+  print(stats::formula(x), showEnv=FALSE, ...)
+  if (!is.null(time_nom_data <- getAttributeColumn(x, attr_name="time.nominal", warn_missing=c()))) {
+    cat("Nominal time column is: ", names(time_nom_data), "\n", sep="")
+  } else {
+    cat("Nominal time column is not specified.\n")
+  }
   if (summarize) {
     cat("\n")
-    grp <- getGroups(x)
+    grp <- getGroups.PKNCAdose(x)
     if (ncol(grp) > 0) {
-      tmp.summary <- data.frame(Group.Name=names(grp),
-                                Count=0)
-      for (i in 1:ncol(grp))
-        tmp.summary$Count[i] <- nrow(unique(grp[,1:i,drop=FALSE]))
-      cat("Group summary:\n")
-      names(tmp.summary) <- gsub("\\.", " ", names(tmp.summary))
+      tmp.summary <- as.data.frame(
+        lapply(grp, FUN=function(y) length(unique(y))))
+      cat("Number unique entries in each group:\n")
       print.data.frame(tmp.summary, row.names=FALSE)
     } else {
       cat("No groups.\n")
     }
-  }
-  if (n != 0) {
-    if (n >= nrow(x$data)) {
-      cat("\nData for dosing:\n")
-    } else if (n < 0) {
-      cat(sprintf("\nFirst %d rows of dosing data:\n",
-                  nrow(x$data)+n))
-    } else {
-      cat(sprintf("\nFirst %d rows of dosing data:\n",
-                  n))
+  } else {
+    if (n != 0) {
+      if (n >= nrow(x$data)) {
+        cat("\nData for dosing:\n")
+      } else if (n < 0) {
+        cat(sprintf("\nFirst %d rows of dosing data:\n",
+                    nrow(x$data)+n))
+      } else {
+        cat(sprintf("\nFirst %d rows of dosing data:\n",
+                    n))
+      }
+      print.data.frame(utils::head(x$data, n=n), ..., row.names=FALSE)
     }
-    print.data.frame(utils::head(x$data, n=n), ..., row.names=FALSE)
   }
 }
 
@@ -259,7 +300,6 @@ print.PKNCAdose <- function(x, n=6, summarize=FALSE, ...) {
 #' @export
 summary.PKNCAdose <- summary.PKNCAconc
 
-#' @rdname plot.PKNCAconc
+#' @rdname split.PKNCAconc
 #' @export
-plot.PKNCAdata <- function(x, ...)
-  graphics::plot(x$conc, ...)
+split.PKNCAdose <- split.PKNCAconc

@@ -2,7 +2,7 @@
 #' trend
 #'
 #' A linear slope is fit through the data to find when it becomes
-#' non-significant.  Note that this is less preferrred than the
+#' non-significant.  Note that this is less preferred than the
 #' \code{pk.tss.monoexponential} due to the fact that with more time
 #' or more subjects the performance of the test changes (see
 #' reference).
@@ -21,12 +21,14 @@
 #' while running.
 #' @return A scalar float for the first time when steady-state is
 #' achieved or \code{NA} if it is not observed.
-#' @seealso \code{\link{pk.tss.monoexponential}}
+#' @family Time to steady-state calculations
 #' @references
 #' Maganti L, Panebianco DL, Maes AL.  Evaluation of Methods for
 #' Estimating Time to Steady State with Examples from Phase 1 Studies.
 #' AAPS Journal 10(1):141-7. doi:10.1208/s12248-008-9014-y
 #' @export
+#' @importFrom nlme intervals lme
+#' @importFrom stats confint coef glm
 pk.tss.stepwise.linear <- function(...,
                                    min.points=3, level=0.95, verbose=FALSE,
                                    check=TRUE) {
@@ -107,5 +109,8 @@ pk.tss.stepwise.linear <- function(...,
     }, silent=!verbose)
     remaining.time <- remaining.time[-1]
   }
-  data.frame(tss.stepwise.linear=ret)
+  data.frame(
+    tss.stepwise.linear=ret,
+    stringsAsFactors=FALSE
+  )
 }

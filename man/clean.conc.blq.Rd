@@ -2,45 +2,51 @@
 % Please edit documentation in R/cleaners.R
 \name{clean.conc.blq}
 \alias{clean.conc.blq}
-\title{Handle BLQ values in the concentration measurements as requested by
+\title{Handle BLQ values in the concentration measurements as requested by 
 the user.}
 \usage{
-clean.conc.blq(conc, time, ..., options = list(),
-  conc.blq = PKNCA.choose.option("conc.blq", options),
-  conc.na = PKNCA.choose.option("conc.na", options), check = TRUE)
+clean.conc.blq(
+  conc,
+  time,
+  ...,
+  options = list(),
+  conc.blq = NULL,
+  conc.na = NULL,
+  check = TRUE
+)
 }
 \arguments{
 \item{conc}{Measured concentrations}
 
 \item{time}{Time of the concentration measurement}
 
-\item{options}{List of changes to the default
+\item{\dots}{Additional arguments passed to clean.conc.na}
+
+\item{options}{List of changes to the default 
 \code{\link{PKNCA.options}} for calculations.}
 
-\item{conc.blq}{How to handle a BLQ value that is between above LOQ
+\item{conc.blq}{How to handle a BLQ value that is between above LOQ 
 values?  See details for description.}
 
-\item{conc.na}{How to handle NA concentrations.  (See
+\item{conc.na}{How to handle NA concentrations.  (See 
 \code{\link{clean.conc.na}})}
 
 \item{check}{Run \code{\link{check.conc.time}}?}
-
-\item{\dots}{Additional arguments passed to clean.conc.na}
 }
 \value{
-The concentration and time measurements (data frame)
-filtered and cleaned as requested relative to BLQ in the middle.
+The concentration and time measurements (data frame) filtered
+  and cleaned as requested relative to BLQ in the middle.
 }
 \description{
-Handle BLQ values in the concentration measurements as requested by
+Handle BLQ values in the concentration measurements as requested by 
 the user.
 }
 \details{
-NA concentrations (and their associated times) will be
-handled as described in \code{\link{clean.conc.na}} before working
-with the BLQ values.  The method for handling NA concentrations can
-affect the output of which points are considered BLQ and which are
-considered "middle".  Values are considered BLQ if they are 0.
+NA concentrations (and their associated times) will be 
+  handled as described in \code{\link{clean.conc.na}} before working 
+  with the BLQ values.  The method for handling NA concentrations can
+  affect the output of which points are considered BLQ and which are 
+  considered "middle".  Values are considered BLQ if they are 0.
 
 \code{conc.blq} can be set either a scalar indicating what
 should be done for all BLQ values or a list with elements named
@@ -63,6 +69,7 @@ The valid settings for each are:
 }
 }
 \seealso{
-\code{\link{clean.conc.na}}
+Other Data cleaners: 
+\code{\link{clean.conc.na}()}
 }
-
+\concept{Data cleaners}

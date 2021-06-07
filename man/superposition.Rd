@@ -10,11 +10,25 @@ superposition(conc, ...)
 
 \method{superposition}{PKNCAconc}(conc, ...)
 
-\method{superposition}{numeric}(conc, time, dose.input, tau, dose.times = 0,
-  dose.amount, n.tau = Inf, options = list(), lambda.z,
-  clast.pred = FALSE, tlast, additional.times = c(), check.blq = TRUE,
-  interp.method = PKNCA.choose.option("auc.method", options),
-  extrap.method = "AUCinf", steady.state.tol = 0.001, ...)
+\method{superposition}{numeric}(
+  conc,
+  time,
+  dose.input,
+  tau,
+  dose.times = 0,
+  dose.amount,
+  n.tau = Inf,
+  options = list(),
+  lambda.z,
+  clast.pred = FALSE,
+  tlast,
+  additional.times = c(),
+  check.blq = TRUE,
+  interp.method = NULL,
+  extrap.method = "AUCinf",
+  steady.state.tol = 0.001,
+  ...
+)
 }
 \arguments{
 \item{conc}{Concentration measured}
@@ -54,7 +68,7 @@ either give the value for clast.pred here or set it to true (for
 automatic calculation from the half-life).}
 
 \item{tlast}{The time of last observed concentration above the
-limit of quantificaiton.  This is calculated if not provided.}
+limit of quantification.  This is calculated if not provided.}
 
 \item{additional.times}{Times to include in the final outputs in
 addition to the standard times (see details).  All
@@ -86,4 +100,3 @@ following times: 0 (zero), \code{dose.times}, \code{time modulo tau}
 \seealso{
 \code{\link{interp.extrap.conc}}
 }
-

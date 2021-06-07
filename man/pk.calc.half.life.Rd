@@ -4,34 +4,47 @@
 \alias{pk.calc.half.life}
 \title{Compute the half-life and associated parameters}
 \usage{
-pk.calc.half.life(conc, time, tmax, tlast, options = list(),
-  min.hl.points = PKNCA.choose.option("min.hl.points", options),
-  adj.r.squared.factor = PKNCA.choose.option("adj.r.squared.factor", options),
-  conc.blq = PKNCA.choose.option("conc.blq", options),
-  conc.na = PKNCA.choose.option("conc.na", options),
-  first.tmax = PKNCA.choose.option("first.tmax", options),
-  allow.tmax.in.half.life = PKNCA.choose.option("allow.tmax.in.half.life",
-  options), check = TRUE)
+pk.calc.half.life(
+  conc,
+  time,
+  tmax,
+  tlast,
+  manually.selected.points = FALSE,
+  options = list(),
+  min.hl.points = NULL,
+  adj.r.squared.factor = NULL,
+  conc.blq = NULL,
+  conc.na = NULL,
+  first.tmax = NULL,
+  allow.tmax.in.half.life = NULL,
+  check = TRUE
+)
 }
 \arguments{
 \item{conc}{Concentration measured}
 
 \item{time}{Time of concentration measurement}
 
-\item{tmax}{Time of maximum concentration (will be calculated and
+\item{tmax}{Time of maximum concentration (will be calculated and 
 included in the return data frame if not given)}
 
-\item{tlast}{Time of last concentration above the limit of
-quantification (will be calculated and included in the return data
+\item{tlast}{Time of last concentration above the limit of 
+quantification (will be calculated and included in the return data 
 frame if not given)}
 
-\item{options}{List of changes to the default
+\item{manually.selected.points}{Have the input points (\code{conc} and
+\code{time}) been manually selected?  The impact of setting this to
+\code{TRUE} is that no selection for the best points will be done.  When
+\code{TRUE}, this option causes the options of \code{adj.r.squared.factor},
+\code{min.hl.points}, and \code{allow.tmax.in.half.life} to be ignored.}
+
+\item{options}{List of changes to the default 
 \code{\link{PKNCA.options}} for calculations.}
 
-\item{min.hl.points}{The minimum number of points that must be
+\item{min.hl.points}{The minimum number of points that must be 
 included to calculate the half-life}
 
-\item{adj.r.squared.factor}{The allowance in adjusted r-squared for
+\item{adj.r.squared.factor}{The allowance in adjusted r-squared for 
 adding another point.}
 
 \item{conc.blq}{See \code{\link{clean.conc.blq}}}
@@ -40,46 +53,61 @@ adding another point.}
 
 \item{first.tmax}{See \code{\link{pk.calc.tmax}}.}
 
-\item{allow.tmax.in.half.life}{Allow the concentration point for
-tmax to be included in the half-life slope calculation.}
+\item{allow.tmax.in.half.life}{Allow the concentration point for tmax
+to be included in the half-life slope calculation.}
 
-\item{check}{Run \code{\link{check.conc.time}},
+\item{check}{Run \code{\link{check.conc.time}}, 
 \code{\link{clean.conc.blq}}, and \code{\link{clean.conc.na}}?}
 }
 \value{
 A data frame with one row and columns for
-\describe{
-  \item{tmax}{Time of maximum observed concentration (only included if not given as an input)}
-  \item{tlast}{Time of last observed concentration above the LOQ (only included if not given as an input)}
-  \item{r.squared}{coefficient of determination}
-  \item{adj.r.squared}{adjusted coefficient of determination}
+ \describe{ 
+  \item{tmax}{Time of maximum observed concentration (only included
+    if not given as an input)}
+  \item{tlast}{Time of last observed concentration above the LOQ (only
+    included if not given as an input)}
+  \item{r.squared}{coefficient of determination} 
+  \item{adj.r.squared}{adjusted coefficient of determination} 
   \item{lambda.z}{elimination rate}
   \item{lambda.z.time.first}{first time for half-life calculation}
   \item{lambda.z.n.points}{number of points in half-life calculation}
   \item{clast.pred}{Concentration at tlast as predicted by the half-life
-      line}
+    line}
   \item{half.life}{half-life}
-  \item{span.ratio}{span ratio [ratio of half-life to time used for half-life
-      calculation}
-}
+  \item{span.ratio}{span ratio [ratio of half-life to time used for
+    half-life calculation}
+ }
 }
 \description{
-The half-life is calculated by computing the best fit line for all
-available sets of points.  The best one is chosen by the following
-rules in order:
+The terminal elimination half-life is estimated from the final points in the
+concentration-time curve using semi-log regression (\code{log(conc)~time})
+with automated selection of the points for calculation (unless
+\code{manually.selected.points} is \code{TRUE}).
 }
 \details{
+See the "Half-Life Calculation" vignette for more details on the calculation
+methods used.
+
+If \code{manually.selected.points} is \code{FALSE} (default), the
+half-life is calculated by computing the best fit line for all points at or
+after tmax (based on the value of \code{allow.tmax.in.half.life}.  The best
+half-life is chosen by the following rules in order:
+
 \itemize{
-\item{At least \code{min.hl.points} points included}
-\item{A \code{lambda.z} > 0}
-\item{The best adjusted r-squared (within \code{adj.r.squared.factor})}
-\item{The one with the most points included}
-}
-}
-\references{
-Gabrielsson J, Weiner D.  "Section 2.8.4 Strategies for estimation
-of lambda-z."  Pharmacokinetic & Pharmacodynamic Data Analysis:
-Concepts and Applications, 4th Edition.  Stockholm, Sweden: Swedish
-Pharmaceutical Press, 2000.  167-9.
+ \item{At least \code{min.hl.points} points included} 
+ \item{A \code{lambda.z} > 0 and at the same time the best adjusted r-squared
+ (within \code{adj.r.squared.factor})}
+ \item{The one with the most points included}
 }
 
+If \code{manually.selected.points} is \code{TRUE}, the \code{conc}
+and \code{time} data are used as-is without any form of selection for
+the best-fit half-life.
+}
+\references{
+Gabrielsson J, Weiner D.  "Section 2.8.4 Strategies for estimation of
+lambda-z."  Pharmacokinetic & Pharmacodynamic Data Analysis: Concepts
+and Applications, 4th Edition.  Stockholm, Sweden: Swedish 
+Pharmaceutical Press, 2000.  167-9.
+}
+\concept{NCA parameter calculations}

@@ -25,4 +25,9 @@ found.
 Find the first occurrence of an operator in a formula and return
 the left, right, or both sides of the operator.
 }
-
+\seealso{
+Other Formula parsing: 
+\code{\link{formula.parseFormula}()},
+\code{\link{parseFormula}()}
+}
+\concept{Formula parsing}

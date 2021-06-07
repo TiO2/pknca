@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Bill Denney" />
+
+
+<title>PKNCA Validation</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">PKNCA Validation</h1>
+<h4 class="author">Bill Denney</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#summary-of-testing">Summary of Testing</a></li>
+<li><a href="#testing-log">Testing Log</a><ul>
+<li><a href="#interval-columns">Interval columns</a></li>
+<li><a href="#aic.list-testing">AIC.list testing</a></li>
+<li><a href="#auc-and-aumc">AUC and AUMC</a></li>
+<li><a href="#aucint">aucint</a></li>
+<li><a href="#auc-interval-checking">AUC interval checking</a></li>
+<li><a href="#determining-tau-for-aucs">Determining tau for AUCs</a></li>
+<li><a href="#class-generation-general">Class generation-general</a></li>
+<li><a href="#class-generation-pkncaconc">Class generation-PKNCAconc</a></li>
+<li><a href="#class-generation-pkncadata">Class generation-PKNCAdata</a></li>
+<li><a href="#class-generation-pkncadose">Class generation-PKNCAdose</a></li>
+<li><a href="#class-generation-pkncaresults">Class generation-PKNCAresults</a></li>
+<li><a href="#missing-and-blq-data-cleaners">Missing and BLQ data cleaners</a></li>
+<li><a href="#exclude">exclude</a></li>
+<li><a href="#exclude_nca">exclude_nca</a></li>
+<li><a href="#check-conversion">Check Conversion</a></li>
+<li><a href="#check-concentration-and-time-inputs">Check concentration and time inputs</a></li>
+<li><a href="#rounding-to-string-values">Rounding to string values</a></li>
+<li><a href="#half-life">Half-life</a></li>
+<li><a href="#interpolation-and-extrapolation-of-concentration">Interpolation and extrapolation of concentration</a></li>
+<li><a href="#merging-lists">merging lists</a></li>
+<li><a href="#formula-parsing">Formula parsing</a></li>
+<li><a href="#business-rule-functions">Business rule functions</a></li>
+<li><a href="#all-nca-calculations">All NCA calculations</a></li>
+<li><a href="#c0-calculations">C0 Calculations</a></li>
+<li><a href="#dose-normalized-nca-functions">Dose-normalized NCA functions</a></li>
+<li><a href="#simple-nca-functions">Simple NCA functions</a></li>
+<li><a href="#urine">Urine</a></li>
+<li><a href="#pknca-option-setting">PKNCA option setting</a></li>
+<li><a href="#pknca-summary-setting">PKNCA summary setting</a></li>
+<li><a href="#provenance">Provenance</a></li>
+<li><a href="#superposition">Superposition</a></li>
+<li><a href="#time-to-steady-state">Time to steady-state</a></li>
+<li><a href="#time_calc">time_calc()</a></li>
+</ul></li>
+<li><a href="#session-information">Session Information</a></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>To run the tests, the package must be installed with its tests:</p>
+<ul>
+<li>To install from CRAN:
+<ul>
+<li><code>install.packages(pkgs=&quot;PKNCA&quot;, INSTALL_opts=&quot;--install-tests&quot;, type=&quot;source&quot;)</code></li>
+</ul></li>
+<li>To install from GitHub:
+<ul>
+<li><code>library(devtools)</code></li>
+<li><code>install_github(&quot;billdenney/pknca&quot;, INSTALL_opts=&quot;--install-tests&quot;)</code></li>
+</ul></li>
+</ul>
+<p>Testing and validation that results match in a local environment compared to the original environment is an important part of confirmation that a package works as expected.</p>
+<p>Re-running this vignette in your local environment will confirm that local results match those in the original package development. Test success is confirmed by the existence of no failed tests; warnings are expected during testing (and not shown in this vignette for that reason); and some tests may be skipped, but those are expected as well.</p>
+</div>
+<div id="summary-of-testing" class="section level1">
+<h1>Summary of Testing</h1>
+<p>The following sentence is dynamically generated to summarize the testing results: All tests passed.</p>
+</div>
+<div id="testing-log" class="section level1">
+<h1>Testing Log</h1>
+<div id="interval-columns" class="section level2">
+<h2>Interval columns</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-001-add.interval.col.R</td>
+<td align="left">add.interval.col</td>
+<td align="right">16</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="aic.list-testing" class="section level2">
+<h2>AIC.list testing</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-AIC.list.R</td>
+<td align="left">AIC.list</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-AIC.list.R</td>
+<td align="left">get.first.model</td>
+<td align="right">15</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-AIC.list.R</td>
+<td align="left">get.best.model</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="auc-and-aumc" class="section level2">
+<h2>AUC and AUMC</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auxc</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auc</td>
+<td align="right">94</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auc.last</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auc.inf</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auc.all</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc.inf</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc.all</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc.last</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.auc.inf.pred</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc.inf.obs</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-auc.R</td>
+<td align="left">pk.calc.aumc.inf.pred</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="aucint" class="section level2">
+<h2>aucint</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-aucint.R</td>
+<td align="left">AUCint gives errors appropriately</td>
+<td align="right">18</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-aucint.R</td>
+<td align="left">AUCint gives the same value when no interpolation/extrapolation is required</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-aucint.R</td>
+<td align="left">AUCint gives a warning and NA when it cannot interpolate or extrapolate a value</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-aucint.R</td>
+<td align="left">AUCint respects auc.type and does the correct calculations for each AUC type</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-aucint.R</td>
+<td align="left">aucint respects doses</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-aucint.R</td>
+<td align="left">aucint works with infinite intervals</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="auc-interval-checking" class="section level2">
+<h2>AUC interval checking</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-check.intervals.R</td>
+<td align="left">check.interval.specification</td>
+<td align="right">24</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-check.intervals.R</td>
+<td align="left">check.interval.deps</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-check.intervals.R</td>
+<td align="left">get.parameter.deps</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-check.intervals.R</td>
+<td align="left">check.intervals requires a valid value</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="determining-tau-for-aucs" class="section level2">
+<h2>Determining tau for AUCs</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-choose-intervals.R</td>
+<td align="left">find.tau</td>
+<td align="right">16</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-choose-intervals.R</td>
+<td align="left">choose.auc.intervals</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="class-generation-general" class="section level2">
+<h2>Class generation-general</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-class-general.R</td>
+<td align="left">getColumnValueorNot</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-general.R</td>
+<td align="left">setAttributeColumn</td>
+<td align="right">19</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-general.R</td>
+<td align="left">getAttributeColumn</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-general.R</td>
+<td align="left">getDataName.default returns NULL</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="class-generation-pkncaconc" class="section level2">
+<h2>Class generation-PKNCAconc</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc with input other than data.frames</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">model frame and parameter extractions</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">split.PKNCAconc</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">print.PKNCAconc</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">summary.PKNCAconc</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc with exclusions</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc with duration</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc with nominal time added</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAconc.R</td>
+<td align="left">PKNCAconc with volume added</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="class-generation-pkncadata" class="section level2">
+<h2>Class generation-PKNCAdata</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">PKNCAdata</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">PKNCAdata with no or limited dose information</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">print.PKNCAdata</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">summary.PKNCAdata</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">splitting PKNCAdata</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">no intervals auto-determined (Fix GitHub issue #84)</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">Ensure that unexpected arguments to PKNCAdata give an error (related to issue #83)</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdata.R</td>
+<td align="left">intervals may be a tibble</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="class-generation-pkncadose" class="section level2">
+<h2>Class generation-PKNCAdose</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">PKNCAdose</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">PKNCAdose without a data.frame as input</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">PKNCAdose model.frame</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">print.PKNCAdose</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">PKNCAdose with exclusions</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">PKNCAdose route and duration</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">time.nominal within PKNCAdose</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAdose.R</td>
+<td align="left">setDuration</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="class-generation-pkncaresults" class="section level2">
+<h2>Class generation-PKNCAresults</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">PKNCAresults generation</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">PKNCAresults has exclude, when applicable</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">PKNCAresults summary</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">dropping <code>start</code> and <code>end</code> from groups is allowed with a warning.</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">summary.PKNCAresults manages exclusions as missing not as non-existent.</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">print.summary_PKNCAresults works</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-class-PKNCAresults.R</td>
+<td align="left">ptr works as a parameter</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="missing-and-blq-data-cleaners" class="section level2">
+<h2>Missing and BLQ data cleaners</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-cleaners.R</td>
+<td align="left">clean.conc.na</td>
+<td align="right">19</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-cleaners.R</td>
+<td align="left">clean.conc.blq</td>
+<td align="right">27</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="exclude" class="section level2">
+<h2>exclude</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-exclude.R</td>
+<td align="left">setExcludeColumn</td>
+<td align="right">14</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-exclude.R</td>
+<td align="left">exclude.default</td>
+<td align="right">17</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-exclude.R</td>
+<td align="left">normalize_exclude makes blanks into NA_character_</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="exclude_nca" class="section level2">
+<h2>exclude_nca</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-exclude_nca.R</td>
+<td align="left">exclude_nca</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-conversion" class="section level2">
+<h2>Check Conversion</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-general.functions.R</td>
+<td align="left">check.conversion</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-concentration-and-time-inputs" class="section level2">
+<h2>Check concentration and time inputs</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-general.functions.R</td>
+<td align="left">check.conc.time</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="rounding-to-string-values" class="section level2">
+<h2>Rounding to string values</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-general.functions.R</td>
+<td align="left">Rounding</td>
+<td align="right">21</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-general.functions.R</td>
+<td align="left">Significance</td>
+<td align="right">33</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-general.functions.R</td>
+<td align="left">signifString stops when bad arguments are passed</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-general.functions.R</td>
+<td align="left">max_na and min_na</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="half-life" class="section level2">
+<h2>Half-life</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-half.life.R</td>
+<td align="left">pk.calc.half.life</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-half.life.R</td>
+<td align="left">half-life manual point selection</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="interpolation-and-extrapolation-of-concentration" class="section level2">
+<h2>Interpolation and extrapolation of concentration</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-interpolate.conc.R</td>
+<td align="left">extrapolate.conc</td>
+<td align="right">25</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-interpolate.conc.R</td>
+<td align="left">interpolate.conc</td>
+<td align="right">32</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-interpolate.conc.R</td>
+<td align="left">interp.extrap.conc</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-interpolate.conc.R</td>
+<td align="left">interp.extrap.conc.dose handles all eventualities</td>
+<td align="right">25</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-interpolate.conc.R</td>
+<td align="left">interp.extrap.conc.dose</td>
+<td align="right">26</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="merging-lists" class="section level2">
+<h2>merging lists</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-merge.R</td>
+<td align="left">merge.splitlist</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="formula-parsing" class="section level2">
+<h2>Formula parsing</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-parseFormula.R</td>
+<td align="left">parseFormula</td>
+<td align="right">14</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-parseFormula.R</td>
+<td align="left">formula.parseFormula</td>
+<td align="right">11</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-parseFormula.R</td>
+<td align="left">print.parseFormula</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-parseFormula.R</td>
+<td align="left">findOperator</td>
+<td align="right">31</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="business-rule-functions" class="section level2">
+<h2>Business rule functions</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.business.rules.R</td>
+<td align="left">geomean</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.business.rules.R</td>
+<td align="left">geosd</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.business.rules.R</td>
+<td align="left">geocv</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.business.rules.R</td>
+<td align="left">business.mean</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.business.rules.R</td>
+<td align="left">pk.business</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="all-nca-calculations" class="section level2">
+<h2>All NCA calculations</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">pk.nca</td>
+<td align="right">14</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">Calculations when dose time is missing</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">Calculations when no dose info is given</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">pk.nca with exclusions</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">pk.calc.all with duration.dose required</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">half life inclusion and exclusion</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">No interval requested (e.g. for placebo)</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">Volume-related calculations</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">pk.nca can calculate values with group-level data</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">Missing dose info for some subjects gives a warning, not a difficult-to-interpret error</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.all.R</td>
+<td align="left">Ensure that options are respected during pk.nca call</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="c0-calculations" class="section level2">
+<h2>C0 Calculations</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0.method.logslope</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0.method.c0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0.method.c1</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0.method.set0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.c0.R</td>
+<td align="left">pk.calc.c0.method.cmin</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="dose-normalized-nca-functions" class="section level2">
+<h2>Dose-normalized NCA functions</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.calc.dn.R</td>
+<td align="left">pk.calc.dn</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.dn.R</td>
+<td align="left">pk.calc.cmax</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="simple-nca-functions" class="section level2">
+<h2>Simple NCA functions</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">adj.r.squared</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.cmax</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.cmin</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.tmax</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.tlast</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.clast.obs</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.thalf.eff</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.kel</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.cl</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.f</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.aucpext</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.mrt</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.mrt.iv</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.mrt.md</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.vz</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.vss and its wrappers</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.vd and its wrappers</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.cav</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.ctrough</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.ptr</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.tlag</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.deg.fluc</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.swing</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.simple.R</td>
+<td align="left">pk.calc.ceoi</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="urine" class="section level2">
+<h2>Urine</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-pk.calc.urine.R</td>
+<td align="left">pk.calc.ae</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-pk.calc.urine.R</td>
+<td align="left">pk.calc.clr</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-pk.calc.urine.R</td>
+<td align="left">pk.calc.fe</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pknca-option-setting" class="section level2">
+<h2>PKNCA option setting</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.options</td>
+<td align="right">92</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.choose.option</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pknca-summary-setting" class="section level2">
+<h2>PKNCA summary setting</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.set.summary input checking</td>
+<td align="right">13</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.set.summary exists for all paramters</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.options.describe</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-PKNCA.options.R</td>
+<td align="left">PKNCA.options fails when setting defaults and another option simultaneously</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="provenance" class="section level2">
+<h2>Provenance</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-provenance.R</td>
+<td align="left">provenance</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="superposition" class="section level2">
+<h2>Superposition</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-superpostion.R</td>
+<td align="left">superposition inputs</td>
+<td align="right">76</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-superpostion.R</td>
+<td align="left">superposition math</td>
+<td align="right">18</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-superpostion.R</td>
+<td align="left">PKNCAconc superposition</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="time-to-steady-state" class="section level2">
+<h2>Time to steady-state</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-time.to.steady.state.R</td>
+<td align="left">pk.tss.data.prep</td>
+<td align="right">11</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-time.to.steady.state.R</td>
+<td align="left">pk.tss.stepwise.linear</td>
+<td align="right">15</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-time.to.steady.state.R</td>
+<td align="left">pk.tss.monoexponential</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-time.to.steady.state.R</td>
+<td align="left">pk.tss</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="time_calc" class="section level2">
+<h2>time_calc()</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Testing Filename</th>
+<th align="left">Test Description</th>
+<th align="right">Number of Tests</th>
+<th align="right">Number of Failed Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">test-time_calc.R</td>
+<td align="left">Numeric time_calc() is successful with all scalar combinations of number and NA and numeric order.</td>
+<td align="right">9</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-time_calc.R</td>
+<td align="left">Numeric time_calc() is successful with all vector combinations of number and NA and numeric order.</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">test-time_calc.R</td>
+<td align="left">POSIXt objects work</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">test-time_calc.R</td>
+<td align="left">difftime</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session Information</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">Sys.Date</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;2019-09-19&quot;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 3.6.1 (2019-07-05)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.1252 
+## [2] LC_CTYPE=English_United States.1252   
+## [3] LC_MONETARY=English_United States.1252
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] testthat_2.2.1   ggplot2_3.2.1    knitr_1.24       cowplot_1.0.0   
+## [5] dplyr_0.8.3      PKNCA_0.9.1.9002
+## 
+## loaded via a namespace (and not attached):
+##  [1] tidyselect_0.2.5  xfun_0.9          remotes_2.1.0    
+##  [4] purrr_0.3.2       lattice_0.20-38   colorspace_1.4-1 
+##  [7] vctrs_0.2.0       usethis_1.5.1     htmltools_0.3.6  
+## [10] yaml_2.2.0        rlang_0.4.0       pkgbuild_1.0.5   
+## [13] pillar_1.4.2      glue_1.3.1        withr_2.1.2      
+## [16] sessioninfo_1.1.1 lifecycle_0.1.0   stringr_1.4.0    
+## [19] munsell_0.5.0     gtable_0.3.0      devtools_2.2.0   
+## [22] htmlwidgets_1.3   evaluate_0.14     memoise_1.1.0    
+## [25] labeling_0.3      callr_3.3.1       ps_1.3.0         
+## [28] parallel_3.6.1    highr_0.8         Rcpp_1.0.2       
+## [31] backports_1.1.4   scales_1.0.0      DT_0.8           
+## [34] desc_1.2.0        pkgload_1.0.2     fs_1.3.1         
+## [37] digest_0.6.20     stringi_1.4.3     processx_3.4.1   
+## [40] grid_3.6.1        rprojroot_1.3-2   cli_1.1.0        
+## [43] tools_3.6.1       magrittr_1.5      lazyeval_0.2.2   
+## [46] tibble_2.1.3      crayon_1.3.4      tidyr_1.0.0      
+## [49] pkgconfig_2.0.2   zeallot_0.1.0     MASS_7.3-51.4    
+## [52] ellipsis_0.2.0.1  prettyunits_1.0.2 assertthat_0.2.1 
+## [55] rmarkdown_1.15    rstudioapi_0.10   R6_2.4.0         
+## [58] nlme_3.1-140      compiler_3.6.1</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

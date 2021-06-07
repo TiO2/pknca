@@ -4,23 +4,28 @@
 \alias{check.interval.deps}
 \title{Take in a single row of an interval specification and return that
 row updated with any additional calculations that must be done to
-fulfil all dependencies.}
+fulfill all dependencies.}
 \usage{
 check.interval.deps(x)
 }
 \arguments{
-\item{x}{A data frame with one or morw rows of the PKNCA interval}
+\item{x}{A data frame with one or more rows of the PKNCA interval}
 }
 \value{
-The interval specification with additional calculations
-added where requested outputs require them.
+The interval specification with additional calculations added where
+  requested outputs require them.
 }
 \description{
 Take in a single row of an interval specification and return that
 row updated with any additional calculations that must be done to
-fulfil all dependencies.
+fulfill all dependencies.
 }
 \seealso{
-\code{\link{check.interval.specification}}
+Other Interval specifications: 
+\code{\link{add.interval.col}()},
+\code{\link{check.interval.specification}()},
+\code{\link{choose.auc.intervals}()},
+\code{\link{get.interval.cols}()},
+\code{\link{get.parameter.deps}()}
 }
-
+\concept{Interval specifications}

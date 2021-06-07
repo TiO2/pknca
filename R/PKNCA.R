@@ -1,21 +1,36 @@
 #' Compute noncompartmental pharmacokinetics
-#'
-#' This package computes pharmacokinetic (PK) noncompartmental
-#' analysis (NCA) parameters.
-#'
-#' Typically, you will start with the \code{\link{pk.nca}}
-#' function and then use the \code{\link{summary}} function to
-#' generate tables for reporting.
-#'
+#' 
+#' Compute pharmacokinetic (PK) noncompartmental analysis (NCA) 
+#' parameters.
+#' 
+#' PKNCA has been cross-validated with both Phoenix WinNonlin(R) and Pumas
+#' (click here for the
+#' \href{http://www.humanpredictions.com/wp-content/uploads/2020/01/ACOP_2019_T102_NCA_performance_evaluation_Yingbo_revised.pdf}{cross-validation
+#' article})
+#' 
+#' A common workflow would load data from a file or database into a 
+#' data.frame then run the following code.
+#' @examples
+#' \dontrun{
+#' # Load concentration-time data into a data.frame called d.conc
+#' # with columns named "conc", "time", and "subject".
+#' my.conc <- PKNCAconc(d.conc, conc~time|subject)
+#' # Load dose-time data into a data.frame called d.dose
+#' # with columns named "dose", "time", and "subject".
+#' my.dose <- PKNCAdose(d.dose, dose~time|subject)
+#' # Combine the concentration-time and dose-time data into an object
+#' # ready for calculations.
+#' my.data <- PKNCAdata(my.conc, my.dose)
+#' # Perform the calculations
+#' my.results <- pk.nca(my.data)
+#' # Look at summary results
+#' summary(my.results)
+#' # Look at a listing of results
+#' as.data.frame(my.results)
+#' }
 #' @docType package
 #' @name PKNCA
-#' @importFrom digest digest
-#' @importFrom doBy renameCol splitBy summaryBy
-#' @importFrom graphics plot
-#' @importFrom lattice xyplot
-#' @importFrom nlme fixef getData getGroups gnls intervals lme nlme ranef
-#' @importFrom parallel mclapply
-#' @importFrom plyr rbind.fill
-#' @importFrom stats AIC as.formula coef confint formula glm logLik lm median model.frame na.exclude na.omit predict sd update update.formula
-#' @importFrom utils head sessionInfo
 NULL
+
+# To work with the use of dplyr's pipe within the exclude function
+utils::globalVariables(".")

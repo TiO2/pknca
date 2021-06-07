@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Bill Denney" />
+
+
+<title>Introduction to PKNCA and Usage Instructions</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to PKNCA and Usage Instructions</h1>
+<h4 class="author">Bill Denney</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#quick-start">Quick Start</a></li>
+<li><a href="#data-handling">Data Handling</a></li>
+<li><a href="#options-make-pknca-work-your-way">Options: Make PKNCA Work Your Way</a><ul>
+<li><a href="#calculation-options-the-pknca.options-function">Calculation Options: the PKNCA.options Function</a></li>
+<li><a href="#summarization-options-the-pknca.set.summary-function">Summarization Options: the PKNCA.set.summary Function</a></li>
+</ul></li>
+<li><a href="#grouping-nca-data">Grouping NCA Data</a></li>
+<li><a href="#selecting-calculation-intervals">Selecting Calculation Intervals</a><ul>
+<li><a href="#selection-of-data-used-for-calculation">Selection of Data Used for Calculation</a></li>
+<li><a href="#automatic-interval-determination">Automatic Interval Determination</a></li>
+<li><a href="#manual-interval-specification">Manual Interval Specification</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>PKNCA provides functions to complete noncompartmental analysis (NCA) for pharmacokinetic (PK) data. Its intent is to provide a complete R-based solution enabling data provenance for NCA including tracking data cleaning, enabling calculations, exporting results, and reporting. The library is designed to give a reasonable answer without user intervention (load, calculate, and summarize), but it allows the user to override the automatic selections at any point.</p>
+<p>The library design is modular to allow expansion based on needs unforseen by the authors including new NCA parameters, novel data cleaning methods, and modular summarization decisions. Expanding the library will be discussed in a separate vignette.</p>
+<div id="quick-start" class="section level1">
+<h1>Quick Start</h1>
+<p>The simplest analysis requires concentration and dosing data, then five function calls can provide summarized results. (Please note that this and the other examples in this document are intended to show the typical workflow, but they are not intended to run directly. For an example to run directly, please see <a href="Example-theophylline.html">the theophylline example</a>.)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(PKNCA)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(dplyr, <span class="dt">quietly=</span><span class="ot">TRUE</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">## Load the PK concentration data</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>d_conc &lt;-<span class="st"> </span>datasets<span class="op">::</span>Theoph <span class="op">%&gt;%</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">Subject=</span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(Subject)))</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">## Generate the dosing data</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>d_dose &lt;-<span class="st"> </span>d_conc[d_conc<span class="op">$</span>Time <span class="op">==</span><span class="st"> </span><span class="dv">0</span>,]</span>
+<span id="cb1-9"><a href="#cb1-9"></a>d_dose<span class="op">$</span>Time &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">## Create a concentration object specifying the concentration, time, and</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">## subject columns.  (Note that any number of grouping levels is</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="co">## supported; you are not restricted to just grouping by subject.)</span></span>
+<span id="cb1-14"><a href="#cb1-14"></a>conc_obj &lt;-<span class="st"> </span><span class="kw">PKNCAconc</span>(d_conc,</span>
+<span id="cb1-15"><a href="#cb1-15"></a>                      conc<span class="op">~</span>Time<span class="op">|</span>Subject)</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">## Create a dosing object specifying the dose, time, and subject</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a><span class="co">## columns.  (Note that the grouping factors should be the same as or a</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co">## subset of the grouping factors for concentration, and the grouping</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="co">## columns must have the same names between concentration and dose</span></span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="co">## objects.)</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>dose_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdose</span>(d_dose,</span>
+<span id="cb1-22"><a href="#cb1-22"></a>                      Dose<span class="op">~</span>Time<span class="op">|</span>Subject)</span>
+<span id="cb1-23"><a href="#cb1-23"></a><span class="co">## Combine the concentration and dosing information both to</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a><span class="co">## automatically define the intervals for NCA calculation and provide</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a><span class="co">## doses for calculations requiring dose.</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>data_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdata</span>(conc_obj, dose_obj)</span>
+<span id="cb1-27"><a href="#cb1-27"></a></span>
+<span id="cb1-28"><a href="#cb1-28"></a><span class="co">## Calculate the NCA parameters</span></span>
+<span id="cb1-29"><a href="#cb1-29"></a>results_obj &lt;-<span class="st"> </span><span class="kw">pk.nca</span>(data_obj)</span>
+<span id="cb1-30"><a href="#cb1-30"></a></span>
+<span id="cb1-31"><a href="#cb1-31"></a><span class="co">## Summarize the results</span></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="kw">summary</span>(results_obj)</span></code></pre></div>
+<pre><code>##  start end  N     auclast        cmax               tmax   half.life
+##      0  24 12 74.6 [24.3]           .                  .           .
+##      0 Inf 12           . 8.65 [17.0] 1.14 [0.630, 3.55] 8.18 [2.12]
+##  aucinf.obs
+##           .
+##  115 [28.4]
+## 
+## Caption: auclast, cmax, aucinf.obs: geometric mean and geometric coefficient of variation; tmax: median and range; half.life: arithmetic mean and standard deviation</code></pre>
+</div>
+<div id="data-handling" class="section level1">
+<h1>Data Handling</h1>
+<p>After loading data, it must be in the right form. The minimum requirements are that concentration, dose, and time must all be numeric (and not factors). Grouping variables have no specific requirements; they can be any mode.</p>
+<p>Values below the limit of quantificaiton are coded as zeros (<code>0</code>), and missing values are coded as <code>NA</code>.</p>
+</div>
+<div id="options-make-pknca-work-your-way" class="section level1">
+<h1>Options: Make PKNCA Work Your Way</h1>
+<div id="calculation-options-the-pknca.options-function" class="section level2">
+<h2>Calculation Options: the PKNCA.options Function</h2>
+<p>Different organizations have different requirements for computation and summarization of NCA. Options for how to perform calculations and summaries are handled by the <code>PKNCA.options</code> command.</p>
+<p>Default options have been set to commonly-used standard parameters. The current value for options can be found by running the command with no arguments:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">PKNCA.options</span>()</span></code></pre></div>
+<pre><code>## $adj.r.squared.factor
+## [1] 1e-04
+## 
+## $max.missing
+## [1] 0.5
+## 
+## $auc.method
+## [1] &quot;lin up/log down&quot;
+## 
+## $conc.na
+## [1] &quot;drop&quot;
+## 
+## $conc.blq
+## $conc.blq$first
+## [1] &quot;keep&quot;
+## 
+## $conc.blq$middle
+## [1] &quot;drop&quot;
+## 
+## $conc.blq$last
+## [1] &quot;keep&quot;
+## 
+## 
+## $first.tmax
+## [1] TRUE
+## 
+## $allow.tmax.in.half.life
+## [1] FALSE
+## 
+## $min.hl.points
+## [1] 3
+## 
+## $min.span.ratio
+## [1] 2
+## 
+## $max.aucinf.pext
+## [1] 20
+## 
+## $min.hl.r.squared
+## [1] 0.9
+## 
+## $tau.choices
+## [1] NA
+## 
+## $single.dose.aucs
+##   start end auclast aucall aumclast aumcall aucint.last aucint.last.dose
+## 1     0  24    TRUE  FALSE    FALSE   FALSE       FALSE            FALSE
+## 2     0 Inf   FALSE  FALSE    FALSE   FALSE       FALSE            FALSE
+##   aucint.all aucint.all.dose auclast.dn aucall.dn aumclast.dn aumcall.dn
+## 1      FALSE           FALSE      FALSE     FALSE       FALSE      FALSE
+## 2      FALSE           FALSE      FALSE     FALSE       FALSE      FALSE
+##    cmax  cmin  tmax tlast tfirst clast.obs cl.last cl.all     f mrt.last
+## 1 FALSE FALSE FALSE FALSE  FALSE     FALSE   FALSE  FALSE FALSE    FALSE
+## 2  TRUE FALSE  TRUE FALSE  FALSE     FALSE   FALSE  FALSE FALSE    FALSE
+##   mrt.iv.last vss.last vss.iv.last   cav ctrough   ptr  tlag deg.fluc
+## 1       FALSE    FALSE       FALSE FALSE   FALSE FALSE FALSE    FALSE
+## 2       FALSE    FALSE       FALSE FALSE   FALSE FALSE FALSE    FALSE
+##   swing  ceoi    ae clr.last clr.obs clr.pred    fe half.life r.squared
+## 1 FALSE FALSE FALSE    FALSE   FALSE    FALSE FALSE     FALSE     FALSE
+## 2 FALSE FALSE FALSE    FALSE   FALSE    FALSE FALSE      TRUE     FALSE
+##   adj.r.squared lambda.z lambda.z.time.first lambda.z.n.points clast.pred
+## 1         FALSE    FALSE               FALSE             FALSE      FALSE
+## 2         FALSE    FALSE               FALSE             FALSE      FALSE
+##   span.ratio cmax.dn cmin.dn clast.obs.dn clast.pred.dn cav.dn ctrough.dn
+## 1      FALSE   FALSE   FALSE        FALSE         FALSE  FALSE      FALSE
+## 2      FALSE   FALSE   FALSE        FALSE         FALSE  FALSE      FALSE
+##   thalf.eff.last thalf.eff.iv.last kel.last kel.iv.last aucinf.obs
+## 1          FALSE             FALSE    FALSE       FALSE      FALSE
+## 2          FALSE             FALSE    FALSE       FALSE       TRUE
+##   aucinf.pred aumcinf.obs aumcinf.pred aucint.inf.obs aucint.inf.obs.dose
+## 1       FALSE       FALSE        FALSE          FALSE               FALSE
+## 2       FALSE       FALSE        FALSE          FALSE               FALSE
+##   aucint.inf.pred aucint.inf.pred.dose aucinf.obs.dn aucinf.pred.dn
+## 1           FALSE                FALSE         FALSE          FALSE
+## 2           FALSE                FALSE         FALSE          FALSE
+##   aumcinf.obs.dn aumcinf.pred.dn aucpext.obs aucpext.pred cl.obs cl.pred
+## 1          FALSE           FALSE       FALSE        FALSE  FALSE   FALSE
+## 2          FALSE           FALSE       FALSE        FALSE  FALSE   FALSE
+##   mrt.obs mrt.pred mrt.iv.obs mrt.iv.pred mrt.md.obs mrt.md.pred vz.obs
+## 1   FALSE    FALSE      FALSE       FALSE      FALSE       FALSE  FALSE
+## 2   FALSE    FALSE      FALSE       FALSE      FALSE       FALSE  FALSE
+##   vz.pred vss.obs vss.pred vss.iv.obs vss.iv.pred vss.md.obs vss.md.pred
+## 1   FALSE   FALSE    FALSE      FALSE       FALSE      FALSE       FALSE
+## 2   FALSE   FALSE    FALSE      FALSE       FALSE      FALSE       FALSE
+##   vd.obs vd.pred thalf.eff.obs thalf.eff.pred thalf.eff.iv.obs
+## 1  FALSE   FALSE         FALSE          FALSE            FALSE
+## 2  FALSE   FALSE         FALSE          FALSE            FALSE
+##   thalf.eff.iv.pred kel.obs kel.pred kel.iv.obs kel.iv.pred
+## 1             FALSE   FALSE    FALSE      FALSE       FALSE
+## 2             FALSE   FALSE    FALSE      FALSE       FALSE</code></pre>
+<p>And, to reset the current values to the library defaults, run the function with the default argument set to <code>TRUE</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">PKNCA.options</span>(<span class="dt">default=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p>Each of the options is documented where it is used; for example, the first.tmax option is documented in the <code>pk.calc.tmax</code> function.</p>
+</div>
+<div id="summarization-options-the-pknca.set.summary-function" class="section level2">
+<h2>Summarization Options: the PKNCA.set.summary Function</h2>
+<p>On top of methods of calculation, summarization method preferences differ. Typical summarization preferences include selection of the measurement of central tendency and dispersion, handling of missing values, handling of values below the limit of quantification, and more. Beyond the method for summarization, presentation is managed through user preferences. Presentation is typically controlled by rounding to either a defined number of decimal places or significant figures.</p>
+<p>An example is that C<sub>max</sub> may be summarized by the geometric mean with the geometric CV using three significant figures, and having a summary result requires that at least half of the available values are present (not missing). The code below will set this example.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">PKNCA.set.summary</span>(<span class="dt">name=</span><span class="st">&quot;cmax&quot;</span>,</span>
+<span id="cb6-2"><a href="#cb6-2"></a>                  <span class="dt">point=</span>business.geomean,</span>
+<span id="cb6-3"><a href="#cb6-3"></a>                  <span class="dt">spread=</span>business.geocv,</span>
+<span id="cb6-4"><a href="#cb6-4"></a>                  <span class="dt">rounding=</span><span class="kw">list</span>(<span class="dt">signif=</span><span class="dv">3</span>))</span></code></pre></div>
+<p>Another example is that T<sub>max</sub> is usually summarized by the median and range, and as measurements are often taken with minute resolution and recorded in hours, reporting is usually to the second decimal place.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">PKNCA.set.summary</span>(<span class="dt">name=</span><span class="st">&quot;tmax&quot;</span>,</span>
+<span id="cb7-2"><a href="#cb7-2"></a>                  <span class="dt">point=</span>business.median,</span>
+<span id="cb7-3"><a href="#cb7-3"></a>                  <span class="dt">spread=</span>business.range,</span>
+<span id="cb7-4"><a href="#cb7-4"></a>                  <span class="dt">rounding=</span><span class="kw">list</span>(<span class="dt">round=</span><span class="dv">2</span>))</span></code></pre></div>
+<p>If the functions or default rounding options provided in the library do not meet the summarization needs, a user-supplied function can be used for rounding.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>median_na &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="kw">median</span>(x, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a>}</span>
+<span id="cb8-4"><a href="#cb8-4"></a>quantprob_na &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb8-5"><a href="#cb8-5"></a>  <span class="kw">quantile</span>(x, <span class="dt">probs=</span><span class="kw">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>), <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a>}</span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="kw">PKNCA.set.summary</span>(<span class="dt">name=</span><span class="st">&quot;auclast&quot;</span>,</span>
+<span id="cb8-8"><a href="#cb8-8"></a>                  <span class="dt">point=</span>median_na,</span>
+<span id="cb8-9"><a href="#cb8-9"></a>                  <span class="dt">spread=</span>quantprob_na,</span>
+<span id="cb8-10"><a href="#cb8-10"></a>                  <span class="dt">rounding=</span><span class="kw">list</span>(<span class="dt">signif=</span><span class="dv">3</span>))</span></code></pre></div>
+<p>In some cases multiple parameters may need the same summary functions (as often occurs with simulated data). Many parameters can be set simultaneously by specifying a vector of <code>name</code>s.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>median_na &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb9-2"><a href="#cb9-2"></a>  <span class="kw">median</span>(x, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>}</span>
+<span id="cb9-4"><a href="#cb9-4"></a>quantprob_na &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</span>
+<span id="cb9-5"><a href="#cb9-5"></a>  <span class="kw">quantile</span>(x, <span class="dt">probs=</span><span class="kw">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>), <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</span>
+<span id="cb9-6"><a href="#cb9-6"></a>}</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="kw">PKNCA.set.summary</span>(<span class="dt">name=</span><span class="kw">c</span>(<span class="st">&quot;auclast&quot;</span>, <span class="st">&quot;cmax&quot;</span>, <span class="st">&quot;tmax&quot;</span>, <span class="st">&quot;half.life&quot;</span>, <span class="st">&quot;aucinf.pred&quot;</span>),</span>
+<span id="cb9-8"><a href="#cb9-8"></a>                  <span class="dt">point=</span>median_na,</span>
+<span id="cb9-9"><a href="#cb9-9"></a>                  <span class="dt">spread=</span>quantprob_na,</span>
+<span id="cb9-10"><a href="#cb9-10"></a>                  <span class="dt">rounding=</span><span class="kw">list</span>(<span class="dt">signif=</span><span class="dv">3</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="grouping-nca-data" class="section level1">
+<h1>Grouping NCA Data</h1>
+<p>As described in the <a href="#quick-start">quick start</a>, concentration and dose data are generally grouped to identify how to separate the data. Typical groups for concentration data include study, treatment, subject, and analyte. Typical groups for dose data include study, treatment, and subject. By default, summaries are produced based on the concentration groups dropping the subject (so that averages are taken across subjects within the other parameters).</p>
+<p>The quick start example can be extended to include multiple analytes as follows. The only difference is the <code>/analyte</code> formula element in the concentration data. The reason for the slash instead of the plus is that the last element before a slash is assumed to be the subject, and as noted before, the subject is (by default) excluded from the summary grouping (so that summaries are grouped by study, treatment, etc., but not by subject).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">## Generate a faux multi-study, multi-analyte dataset.</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>d_conc_parent &lt;-<span class="st"> </span>d_conc</span>
+<span id="cb10-3"><a href="#cb10-3"></a>d_conc_parent<span class="op">$</span>Subject &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.character</span>(d_conc_parent<span class="op">$</span>Subject))</span>
+<span id="cb10-4"><a href="#cb10-4"></a>d_conc_parent<span class="op">$</span>Study &lt;-<span class="st"> </span>d_conc_parent<span class="op">$</span>Subject <span class="op">&lt;=</span><span class="st"> </span><span class="dv">6</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>d_conc_parent<span class="op">$</span>Analyte &lt;-<span class="st"> &quot;Parent&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>d_conc_metabolite &lt;-<span class="st"> </span>d_conc_parent</span>
+<span id="cb10-7"><a href="#cb10-7"></a>d_conc_metabolite<span class="op">$</span>conc &lt;-<span class="st"> </span>d_conc_metabolite<span class="op">$</span>conc<span class="op">/</span><span class="dv">2</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>d_conc_metabolite<span class="op">$</span>Analyte &lt;-<span class="st"> &quot;Metabolite&quot;</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>d_conc_both &lt;-<span class="st"> </span><span class="kw">rbind</span>(d_conc_parent, d_conc_metabolite)</span>
+<span id="cb10-10"><a href="#cb10-10"></a>d_conc_both &lt;-<span class="st"> </span>d_conc_both[<span class="kw">with</span>(d_conc_both, <span class="kw">order</span>(Study, Subject, Time, Analyte)),]</span>
+<span id="cb10-11"><a href="#cb10-11"></a>d_dose_both &lt;-<span class="st"> </span>d_conc_both[d_conc_both<span class="op">$</span>Time <span class="op">==</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>d_conc_both<span class="op">$</span>Analyte <span class="op">%in%</span><span class="st"> &quot;Parent&quot;</span>,</span>
+<span id="cb10-12"><a href="#cb10-12"></a>                           <span class="kw">c</span>(<span class="st">&quot;Study&quot;</span>, <span class="st">&quot;Subject&quot;</span>, <span class="st">&quot;Dose&quot;</span>, <span class="st">&quot;Time&quot;</span>)]</span>
+<span id="cb10-13"><a href="#cb10-13"></a></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">## Create a concentration object specifying the concentration, time,</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">## study, and subject columns.  (Note that any number of grouping</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="co">## levels is supporting; you are not restricted to this list.)</span></span>
+<span id="cb10-17"><a href="#cb10-17"></a>conc_obj &lt;-<span class="st"> </span><span class="kw">PKNCAconc</span>(d_conc_both,</span>
+<span id="cb10-18"><a href="#cb10-18"></a>                      conc<span class="op">~</span>Time<span class="op">|</span>Study<span class="op">+</span>Subject<span class="op">/</span>Analyte)</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co">## Create a dosing object specifying the dose, time, study, and</span></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co">## subject columns.  (Note that the grouping factors should be a</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="co">## subset of the grouping factors for concentration, and the columns</span></span>
+<span id="cb10-22"><a href="#cb10-22"></a><span class="co">## must have the same names between concentration and dose objects.)</span></span>
+<span id="cb10-23"><a href="#cb10-23"></a>dose_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdose</span>(d_dose_both,</span>
+<span id="cb10-24"><a href="#cb10-24"></a>                     Dose<span class="op">~</span>Time<span class="op">|</span>Study<span class="op">+</span>Subject)</span>
+<span id="cb10-25"><a href="#cb10-25"></a></span>
+<span id="cb10-26"><a href="#cb10-26"></a><span class="co"># Perform and summarize the PK data as previously described</span></span>
+<span id="cb10-27"><a href="#cb10-27"></a>data_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdata</span>(conc_obj, dose_obj)</span>
+<span id="cb10-28"><a href="#cb10-28"></a>results_obj &lt;-<span class="st"> </span><span class="kw">pk.nca</span>(data_obj)</span>
+<span id="cb10-29"><a href="#cb10-29"></a><span class="kw">summary</span>(results_obj)</span></code></pre></div>
+</div>
+<div id="selecting-calculation-intervals" class="section level1">
+<h1>Selecting Calculation Intervals</h1>
+<p>All NCA calculations require the inverval over which they are calculated. When the concentration and dosing information are combined to the PKNCAdata object, intervals are automatically determined. The exception to this automatic determination is if the user provides intervals.</p>
+<p>When selected either automatically or manually, intervals define at minimum a start time, an end time, and the parameters to be calculated. The parameter list is available from the <code>get.interval.cols</code> function. The parameters requested are specified by setting the entry in a data.frame as requested.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>intervals &lt;-</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="st">  </span><span class="kw">data.frame</span>(<span class="dt">start=</span><span class="dv">0</span>, <span class="dt">end=</span><span class="kw">c</span>(<span class="dv">24</span>, <span class="ot">Inf</span>),</span>
+<span id="cb11-3"><a href="#cb11-3"></a>             <span class="dt">cmax=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>),</span>
+<span id="cb11-4"><a href="#cb11-4"></a>             <span class="dt">tmax=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>),</span>
+<span id="cb11-5"><a href="#cb11-5"></a>             <span class="dt">auclast=</span><span class="ot">TRUE</span>,</span>
+<span id="cb11-6"><a href="#cb11-6"></a>             <span class="dt">aucinf.obs=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>))</span></code></pre></div>
+<p>Intervals like the above is sufficient for designs with a single type of treatment– like single doses. For more complex treatments in a single analysis, like the combination of single and multiple doses, include a treatment column matching the treatment column name from the concentration data set. See the <a href="#manual-interval-specification">Manual Interval Specification</a> section below for more details.</p>
+<div id="selection-of-data-used-for-calculation" class="section level2">
+<h2>Selection of Data Used for Calculation</h2>
+<p>When choosing which data is used for a calculation, PKNCA will never look beyond the data specified in the group and interval. Groups are defined by the call to the <code>PKNCAconc</code> function, and they will typically define the measurement of a single analyte from a single individual receiving a single treatment. Intervals are subsets within a group by start and end time. PKNCA never examines data outside of the group and interval for standard NCA calculations. As an example, with data from 0 to 48 hours and an interval set to <code>start</code> at 0 and <code>end</code> at 24 with the calculation of <code>aucinf.obs</code>, any data after 24 hours will not be used for the half-life or AUC<sub>inf</sub> calculations.</p>
+<p>A few functions look at data outside of a single interval, but these functions do not look at data outside of a single group, and these functions are typically used during preparation for NCA calculations not for the calculations themselves. Functions that look a group as a whole include <code>choose.auc.intervals</code>, <code>find.tau</code>, and <code>pk.tss</code>.</p>
+</div>
+<div id="automatic-interval-determination" class="section level2">
+<h2>Automatic Interval Determination</h2>
+<p>If intervals are not specified when combining the concentration and dosing data, they will automatically be found from the concentration and dosing data.</p>
+<p>Single dose data has a simple interval selection: the option <code>single.dose.aucs</code> is used from the <code>PKNCA.options</code>.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="left">auclast</th>
+<th align="left">aucall</th>
+<th align="left">aumclast</th>
+<th align="left">aumcall</th>
+<th align="left">aucint.last</th>
+<th align="left">aucint.last.dose</th>
+<th align="left">aucint.all</th>
+<th align="left">aucint.all.dose</th>
+<th align="left">auclast.dn</th>
+<th align="left">aucall.dn</th>
+<th align="left">aumclast.dn</th>
+<th align="left">aumcall.dn</th>
+<th align="left">cmax</th>
+<th align="left">cmin</th>
+<th align="left">tmax</th>
+<th align="left">tlast</th>
+<th align="left">tfirst</th>
+<th align="left">clast.obs</th>
+<th align="left">cl.last</th>
+<th align="left">cl.all</th>
+<th align="left">f</th>
+<th align="left">mrt.last</th>
+<th align="left">mrt.iv.last</th>
+<th align="left">vss.last</th>
+<th align="left">vss.iv.last</th>
+<th align="left">cav</th>
+<th align="left">ctrough</th>
+<th align="left">ptr</th>
+<th align="left">tlag</th>
+<th align="left">deg.fluc</th>
+<th align="left">swing</th>
+<th align="left">ceoi</th>
+<th align="left">ae</th>
+<th align="left">clr.last</th>
+<th align="left">clr.obs</th>
+<th align="left">clr.pred</th>
+<th align="left">fe</th>
+<th align="left">half.life</th>
+<th align="left">r.squared</th>
+<th align="left">adj.r.squared</th>
+<th align="left">lambda.z</th>
+<th align="left">lambda.z.time.first</th>
+<th align="left">lambda.z.n.points</th>
+<th align="left">clast.pred</th>
+<th align="left">span.ratio</th>
+<th align="left">cmax.dn</th>
+<th align="left">cmin.dn</th>
+<th align="left">clast.obs.dn</th>
+<th align="left">clast.pred.dn</th>
+<th align="left">cav.dn</th>
+<th align="left">ctrough.dn</th>
+<th align="left">thalf.eff.last</th>
+<th align="left">thalf.eff.iv.last</th>
+<th align="left">kel.last</th>
+<th align="left">kel.iv.last</th>
+<th align="left">aucinf.obs</th>
+<th align="left">aucinf.pred</th>
+<th align="left">aumcinf.obs</th>
+<th align="left">aumcinf.pred</th>
+<th align="left">aucint.inf.obs</th>
+<th align="left">aucint.inf.obs.dose</th>
+<th align="left">aucint.inf.pred</th>
+<th align="left">aucint.inf.pred.dose</th>
+<th align="left">aucinf.obs.dn</th>
+<th align="left">aucinf.pred.dn</th>
+<th align="left">aumcinf.obs.dn</th>
+<th align="left">aumcinf.pred.dn</th>
+<th align="left">aucpext.obs</th>
+<th align="left">aucpext.pred</th>
+<th align="left">cl.obs</th>
+<th align="left">cl.pred</th>
+<th align="left">mrt.obs</th>
+<th align="left">mrt.pred</th>
+<th align="left">mrt.iv.obs</th>
+<th align="left">mrt.iv.pred</th>
+<th align="left">mrt.md.obs</th>
+<th align="left">mrt.md.pred</th>
+<th align="left">vz.obs</th>
+<th align="left">vz.pred</th>
+<th align="left">vss.obs</th>
+<th align="left">vss.pred</th>
+<th align="left">vss.iv.obs</th>
+<th align="left">vss.iv.pred</th>
+<th align="left">vss.md.obs</th>
+<th align="left">vss.md.pred</th>
+<th align="left">vd.obs</th>
+<th align="left">vd.pred</th>
+<th align="left">thalf.eff.obs</th>
+<th align="left">thalf.eff.pred</th>
+<th align="left">thalf.eff.iv.obs</th>
+<th align="left">thalf.eff.iv.pred</th>
+<th align="left">kel.obs</th>
+<th align="left">kel.pred</th>
+<th align="left">kel.iv.obs</th>
+<th align="left">kel.iv.pred</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">Inf</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">TRUE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+<td align="left">FALSE</td>
+</tr>
+</tbody>
+</table>
+<p>For multiple-dose studies, PKNCA selects one group at a time and compares the concentration and dosing times. When there is a concentation measurement between doses, an interval row is added. The dosing interval (<span class="math inline">\(\tau\)</span>) is determined by looking for pattern repeats within the dosing data using the <code>find.tau</code> function.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">## find.tau can work when all doses have the same interval...</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>dose_times &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">168</span>, <span class="dt">by=</span><span class="dv">24</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="kw">print</span>(dose_times)</span></code></pre></div>
+<pre><code>## [1]   0  24  48  72  96 120 144 168</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>PKNCA<span class="op">::</span><span class="kw">find.tau</span>(dose_times)</span></code></pre></div>
+<pre><code>## [1] 24</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co">## or when the doses have mixed intervals (10 and 24 hours).</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a>dose_times &lt;-<span class="st"> </span><span class="kw">sort</span>(<span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">0</span>, <span class="dv">168</span>, <span class="dt">by=</span><span class="dv">24</span>),</span>
+<span id="cb16-3"><a href="#cb16-3"></a>                     <span class="kw">seq</span>(<span class="dv">10</span>, <span class="dv">178</span>, <span class="dt">by=</span><span class="dv">24</span>)))</span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="kw">print</span>(dose_times)</span></code></pre></div>
+<pre><code>##  [1]   0  10  24  34  48  58  72  82  96 106 120 130 144 154 168 178</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>PKNCA<span class="op">::</span><span class="kw">find.tau</span>(dose_times)</span></code></pre></div>
+<pre><code>## [1] 24</code></pre>
+<p>After finding <span class="math inline">\(\tau\)</span>, PKNCA will also look after the last dose (or the beginning of the last dosing interval), and two additional intervals may be added:</p>
+<ul>
+<li>one interval for the dosing interval after the beginning of the last dosing interval (if there are concentrations measured in the interval)</li>
+<li>one interval for the half-life after the last dosing interval (if there are concentration more than <span class="math inline">\(\tau\)</span> after the beginning of the last interval).</li>
+</ul>
+<p>One consequence of automatic interval selection is that many rows are generated for intervals; one row is generated per interval per subject. The benefit of the method producing a large number of rows is that it is fully flexible to the actual study results. If a subject has a different schedule than the others for the same treatment (e.g. measurements that were nominally scheduled for day 14 occurred on day 13), those differences will be found.</p>
+</div>
+<div id="manual-interval-specification" class="section level2">
+<h2>Manual Interval Specification</h2>
+<p>Intervals can also be specified manually. Two use cases are common for manual specification: fully manual (never requesting the automatic intervals) and updating the automatic intervals.</p>
+<p>Fully manual intervals can be specified by providing it to the <code>PKNCAdata</code> call.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>intervals_manual &lt;-</span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="st">  </span><span class="kw">data.frame</span>(<span class="dt">start=</span><span class="dv">0</span>, <span class="dt">end=</span><span class="kw">c</span>(<span class="dv">24</span>, <span class="ot">Inf</span>),</span>
+<span id="cb20-3"><a href="#cb20-3"></a>             <span class="dt">cmax=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>),</span>
+<span id="cb20-4"><a href="#cb20-4"></a>             <span class="dt">tmax=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>),</span>
+<span id="cb20-5"><a href="#cb20-5"></a>             <span class="dt">auclast=</span><span class="ot">TRUE</span>,</span>
+<span id="cb20-6"><a href="#cb20-6"></a>             <span class="dt">aucinf.obs=</span><span class="kw">c</span>(<span class="ot">FALSE</span>, <span class="ot">TRUE</span>))</span>
+<span id="cb20-7"><a href="#cb20-7"></a>data_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdata</span>(conc_obj, dose_obj, </span>
+<span id="cb20-8"><a href="#cb20-8"></a>                      <span class="dt">intervals=</span>intervals_manual)</span></code></pre></div>
+<p>To update the automatically-selected intervals, extract the intervals, modify them, and put them back.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>data_obj &lt;-<span class="st"> </span><span class="kw">PKNCAdata</span>(conc_obj, dose_obj)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>intervals_manual &lt;-<span class="st"> </span>data_obj<span class="op">$</span>intervals</span>
+<span id="cb21-3"><a href="#cb21-3"></a>intervals_manual<span class="op">$</span>aucinf.obs[<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="ot">TRUE</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a>data_obj<span class="op">$</span>intervals &lt;-<span class="st"> </span>intervals_manual</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -24,7 +24,7 @@
 #' either give the value for clast.pred here or set it to true (for
 #' automatic calculation from the half-life).
 #' @param tlast The time of last observed concentration above the
-#' limit of quantificaiton.  This is calculated if not provided.
+#' limit of quantification.  This is calculated if not provided.
 #' @param additional.times Times to include in the final outputs in
 #' addition to the standard times (see details).  All
 #' \code{min(additional.times)} must be >= 0, and the
@@ -53,34 +53,26 @@ superposition <- function(conc, ...)
 
 #' @rdname superposition
 #' @export
+#' @importFrom parallel mclapply
 superposition.PKNCAconc <- function(conc, ...) {
-  conc.col <- as.character(parseFormula(conc)$lhs)
-  time.col <- as.character(parseFormula(conc)$rhs)
   ## Split the data by grouping and extract just the concentration and
   ## time columns
-  tmp.data <- doBy::splitBy(parseFormula(conc)$groupFormula,
-                            getData(conc))
-  groupinfo <- attributes(tmp.data)$groupid
-  tmp.data <-
-    parallel::mclapply(X=tmp.data,
-                       FUN=function(x, conc.col, time.col) {
-                         renameCol(x, c(conc.col, time.col),
-                                   c("conc", "time"))[,c("conc", "time")]
-                       },
-                       conc.col=conc.col,
-                       time.col=time.col)
+  tmp.data <- split.PKNCAconc(conc)
+  groupinfo <- attr(tmp.data, 'groupid')
   tmp.results <-
-    parallel::mclapply(X=tmp.data,
-                       FUN=function(x, ...) {
-                         superposition.numeric(x$conc, x$time, ...)
-                       }, ...)
-  ret <- data.frame()
-  for (i in seq_along(tmp.results))
-    ret <- rbind(ret,
-                 cbind(groupinfo[i,,drop=FALSE],
-                       tmp.results[[i]],
-                       row.names=NULL))
-  ret
+    parallel::mclapply(
+      X=seq_along(tmp.data),
+      FUN=function(x, conc.col, time.col, ...) {
+        cbind(groupinfo[x,,drop=FALSE],
+              superposition.numeric(tmp.data[[x]]$data[[conc.col]],
+                                    tmp.data[[x]]$data[[time.col]],
+                                    ...),
+              row.names=NULL)
+      },
+      conc.col=as.character(parseFormula(conc)$lhs),
+      time.col=as.character(parseFormula(conc)$rhs),
+      ...)
+  dplyr::bind_rows(tmp.results)
 }
 
 #' @rdname superposition
@@ -91,11 +83,11 @@ superposition.numeric <- function(conc, time, dose.input,
                                   lambda.z, clast.pred=FALSE, tlast,
                                   additional.times=c(),
                                   check.blq=TRUE,
-                                  interp.method=PKNCA.choose.option("auc.method",
-                                    options),
+                                  interp.method=NULL,
                                   extrap.method="AUCinf",
                                   steady.state.tol=1e-3, ...) {
   ## Check the inputs
+  interp.method <- PKNCA.choose.option(name="auc.method", value=interp.method, options=options)
   ## Concentration and time
   check.conc.time(conc, time)
   if (check.blq)

@@ -8,8 +8,8 @@ test_that("parseFormula", {
   r1 <- list(model=~a,
              lhs=NA,
              rhs=as.name("a"),
-             groups=NA,
-             groupFormula=NA,
+             groups=NULL,
+             groupFormula=NULL,
              env=tmp.env)
   expect_equal(parseFormula(f1),
                r1,
@@ -20,8 +20,8 @@ test_that("parseFormula", {
   r2 <- list(model=a~b,
              lhs=as.name("a"),
              rhs=as.name("b"),
-             groups=NA,
-             groupFormula=NA,
+             groups=NULL,
+             groupFormula=NULL,
              env=tmp.env)
   expect_equal(parseFormula(f2),
                r2,
@@ -122,9 +122,9 @@ test_that("parseFormula", {
                r7,
                check.attributes=FALSE)
   expect_error(parseFormula(f2, require.groups=TRUE),
-               regex="rhs of formula must be a conditioning expression")
+               regexp="rhs of formula must be a conditioning expression")
   expect_error(parseFormula(f1, require.two.sided=TRUE),
-               regex="formula is one-sided with require.two.sided set to TRUE")
+               regexp="formula is one-sided with require.two.sided set to TRUE")
 })
 
 test_that("formula.parseFormula", {

@@ -5,8 +5,11 @@
 \title{A helper function to estimate individual and single outputs for
 monoexponential time to steady-state.}
 \usage{
-pk.tss.monoexponential.individual(data, output = c("individual", "single"),
-  verbose = FALSE)
+pk.tss.monoexponential.individual(
+  data,
+  output = c("individual", "single"),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{a data frame as prepared by
@@ -34,4 +37,3 @@ If no model converges, then the \code{tss.monoexponential.single}
 and/or \code{tss.monoexponential.individual} column will be set to
 NA.
 }
-

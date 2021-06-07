@@ -1,3 +1,10 @@
+<!-- badges: start -->
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/PKNCA)](https://cran.r-project.org/package=PKNCA)
+[![R build status](https://github.com/billdenney/pknca/workflows/R-CMD-check/badge.svg)](https://github.com/billdenney/pknca/actions)
+[![Code_Coverage_Badge](http://codecov.io/github/billdenney/pknca/coverage.svg?branch=master)](http://codecov.io/github/billdenney/pknca?branch=master)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2054/badge)](https://bestpractices.coreinfrastructure.org/projects/2054)
+<!-- badges: end -->
+
 The PKNCA R Package
 ====================
 
@@ -17,9 +24,21 @@ to override.
 
 Note that backward compatibility will not be guaranteed until version
 1.0.  Argument and function changes will continue until then.  These
-will be especially noticable around the inclusion of IV NCA parameters
+will be especially noticeable around the inclusion of IV NCA parameters
 and additional specifications of the dosing including dose amount and
 route.
+
+# Citation
+
+Citation information for the PKNCA package is available with a call to
+`citation(package="PKNCA")`.  The preferred citation until publication
+of version 1.0 is below:
+
+Denney W, Duvvuri S and Buckeridge C (2015). "Simple, Automatic
+Noncompartmental Analysis: The PKNCA R Package." _Journal of
+Pharmacokinetics and Pharmacodynamics_, *42*(1), pp. 11-107,S65. ISSN
+1573-8744, doi: 10.1007/s10928-015-9432-2, <URL:
+https://github.com/billdenney/pknca>.
 
 # Installation
 

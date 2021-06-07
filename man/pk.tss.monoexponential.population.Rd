@@ -5,8 +5,11 @@
 \title{A helper function to estimate population and popind outputs for
 monoexponential time to steady-state.}
 \usage{
-pk.tss.monoexponential.population(data, output = c("population", "popind"),
-  verbose = FALSE)
+pk.tss.monoexponential.population(
+  data,
+  output = c("population", "popind"),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{data}{a data frame as prepared by
@@ -36,4 +39,3 @@ the best model does not include a random effect for subject on Tss
 then the \code{tss.monoexponential.popind} column of the output
 will be set to NA.
 }
-

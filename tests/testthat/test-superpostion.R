@@ -162,29 +162,52 @@ test_that("superposition inputs", {
                              n.tau=1.0000001),
                regexp="n.tau must be an integer or Inf")
 
-  ## lambda.z given and not a scalar
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              n.tau=Inf, lambda.z=c(1, 2)),
-               regexp="lambda.z must be a scalar")
-  ## lambda.z given and not a number
+               regexp="lambda.z must be a scalar",
+               info="lambda.z must be a scalar")
+
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              lambda.z="1"),
-               regexp="lambda.z must be a number")
+               regexp="lambda.z must be a number",
+               info="lambda.z must be a number (character)")
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              lambda.z=factor("1")),
-               regexp="lambda.z must be a number")
+               regexp="lambda.z must be a number",
+               info="lambda.z must be a number (factor)")
 
-  ## clast.pred must be a scalar
+  expect_equal(
+    superposition(
+      conc=c(4, 2, 1, 0.5),
+      time=0:3,
+      tau=24,
+      n.tau=Inf,
+      check.blq=FALSE
+    ),
+    superposition(
+      conc=c(4, 2, 1, 0.5),
+      time=0:3,
+      tau=24,
+      clast.pred=TRUE,
+      n.tau=Inf,
+      check.blq=FALSE
+    ),
+    info="clast.pred may be provided as 'TRUE'"
+  )
+  
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              clast.pred=c(1, 2)),
-               regexp="clast.pred must be a scalar")
-  ## clast.pred must be a number or logical or NA
+               regexp="clast.pred must be a scalar",
+               info="clast.pred must be a scalar")
+
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              clast.pred="1"),
-               regexp="clast.pred must either be a logical .* or numeric value")
+               regexp="clast.pred must either be a logical .* or numeric value",
+               info="clast.pred must be a number or logical or NA (character)")
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
                              clast.pred=factor("1")),
-               regexp="clast.pred must either be a logical .* or numeric value")
+               regexp="clast.pred must either be a logical .* or numeric value",
+               info="clast.pred must be a number or logical or NA (factor)")
 
   ## tlast given and not a scalar
   expect_error(superposition(conc=c(0, 2), time=c(0, 1), tau=24,
@@ -296,18 +319,16 @@ test_that("superposition math", {
                data.frame(conc=c(3, 3, 3, 3.5),
                           time=0:3))
   ## With half-life extrapolation
-  expect_warning(v1 <- superposition(conc=c1, time=t1, tau=3, n.tau=3),
-                 regexp="essentially perfect fit")
+  v1 <- superposition(conc=c1, time=t1, tau=3, n.tau=3)
   expect_equal(v1,
                data.frame(conc=c(3.5, 3.25, 3.125, 3.5625),
                           time=0:3))
   ## To steady-state
-  expect_warning(v2 <- superposition(conc=c1, time=t1, tau=3, n.tau=Inf),
-                 regexp="essentially perfect fit")
+  v2 <- superposition(conc=c1, time=t1, tau=3, n.tau=Inf)
   expect_equal(v2,
                data.frame(conc=c(3.571, 3.286, 3.143, 3.571),
                           time=0:3),
-               tol=0.001)
+               tolerance=0.001)
 
   ## all zeros input gives all zeros output
   expect_equal(superposition(conc=rep(0, 6), time=0:5, tau=24),
@@ -336,11 +357,13 @@ test_that("superposition math", {
                             5, 5.5, 24)))
 
   ## Dose scaling
-  expect_warning(v1 <- superposition(conc=c1, time=t1, dose.input=1, tau=24,
-                                     dose.times=c(0, 0.5),
-                                     dose.amount=1,
-                                     additional.times=c(2.5, 3.5)),
-                 regexp="essentially perfect fit")
+  v1 <-
+    superposition(
+      conc=c1, time=t1, dose.input=1, tau=24,
+      dose.times=c(0, 0.5),
+      dose.amount=1,
+      additional.times=c(2.5, 3.5)
+    )
   expect_equal(v1,
                data.frame(conc=c(
                             4.6047e-06,
@@ -360,14 +383,16 @@ test_that("superposition math", {
                             4.6047e-06),
                           time=c(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5,
                             5, 5.5, 6, 6.5, 24)),
-               tol=0.001,
+               tolerance=0.001,
                info="Dose scaling with matching input and output doses")
 
-  expect_warning(v2 <- superposition(conc=c1, time=t1, dose.input=1, tau=24,
-                                     dose.times=c(0, 0.5),
-                                     dose.amount=c(0.5, 5),
-                                     additional.times=c(2.5, 3.5)),
-                 regexp="essentially perfect fit")
+  v2 <-
+    superposition(
+      conc=c1, time=t1, dose.input=1, tau=24,
+      dose.times=c(0, 0.5),
+      dose.amount=c(0.5, 5),
+      additional.times=c(2.5, 3.5)
+    )
   expect_equal(v2,
                data.frame(conc=c(
                             1.444e-05,
@@ -387,7 +412,7 @@ test_that("superposition math", {
                             1.444e-05),
                           time=c(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5,
                             5, 5.5, 6, 6.5, 24)),
-               tol=0.001,
+               tolerance=0.001,
                info="Dose scaling with different input and output doses")
 
   expect_warning(v3 <- superposition(conc=c(0, 2, 3, 5, 6, 3, 1, 0),
@@ -404,6 +429,17 @@ test_that("superposition math", {
                              lambda.z=1, clast.pred=1, tlast=12),
                data.frame(conc=c(6.144e-6, 2, 3, 5, 6, 3, 1, 6.144e-6),
                           time=c(0, 0.5, 1, 1.5, 2, 8, 12, 24)),
-               tol=0.001,
+               tolerance=0.001,
                info="Uncalculable lambda.z with extrapolation to steady-state with lambda.z given, gives conc values")
+})
+
+test_that("PKNCAconc superposition", {
+  myconc <- PKNCAconc(conc~time|ID,
+                      data=data.frame(ID=rep(1:2, each=7),
+                                      conc=rep(c(0, 1, 2, 3, 2, 1, 0.5), 2),
+                                      time=rep(0:6, 2)))
+  expect_equal(superposition(myconc, tau=3, n.tau=2),
+               data.frame(ID=rep(1:2, each=4),
+                          conc=rep(c(3, 3, 3, 3.5), 2),
+                          time=rep(0:3, 2)))
 })

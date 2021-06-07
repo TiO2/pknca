@@ -1,58 +1,64 @@
 context("PKNCA option setting")
 
 test_that("PKNCA.options", {
-  ## Missing/incorrect option names give an error indicating all the
-  ## options that are missing.
+  # Missing/incorrect option names give an error indicating all the
+  # options that are missing.
   expect_error(PKNCA.options("foo"),
                regexp="PKNCA.options does not have value\\(s\\) for foo.")
   expect_error(PKNCA.options("foo", "bar"),
                regexp="PKNCA.options does not have value\\(s\\) for foo, bar.")
-  ## A mix of mixxing and extant options only give the missing ones
+  # A mix of mixxing and extant options only give the missing ones
   expect_error(PKNCA.options("foo", "bar", "tau.choices"),
                regexp="PKNCA.options does not have value\\(s\\) for foo, bar.")
   
-  ## Single extant options give their default value
+  # Single extant options give their default value
   expect_equal(PKNCA.options("min.hl.points"), 3)
 
-  ## Multiple extant options give a list of their default values
+  # Multiple extant options give a list of their default values
   expect_equal(PKNCA.options("min.hl.points", "min.hl.r.squared"),
                list(min.hl.points=3,
                     min.hl.r.squared=0.9))
-  ## The returned options are in the order they were requested
+  # The returned options are in the order they were requested
   expect_equal(PKNCA.options("min.hl.points", "min.hl.r.squared"),
                list(min.hl.points=3,
                     min.hl.r.squared=0.9))
 
-  ## Asking for an option using the name argument works the same as
-  ## asking for one with a string.
+  # Asking for an option using the name argument works the same as
+  # asking for one with a string.
   expect_equal(PKNCA.options(name="single.dose.aucs"),
                PKNCA.options("single.dose.aucs"))
-  ## You can request more than one option by using string inputs
-  ## combined with a single "name" argument.
+  # You can request more than one option by using string inputs
+  # combined with a single "name" argument.
   expect_equal(PKNCA.options("first.tmax", name="single.dose.aucs"),
                PKNCA.options("first.tmax", name="single.dose.aucs"))
-  ## You cannot both set an option and give it with a name.
+  # You cannot both set an option and give it with a name.
   expect_error(PKNCA.options(foo="var", name="foo", value="bar"),
                regexp="Cannot give an option name both with the name argument and as a named argument.")
-  ## You cannot both set an option (with a value) and request an
-  ## option
+  # You cannot both set an option (with a value) and request an
+  # option
   expect_error(PKNCA.options("first.tmax", name="min.span.ratio", value=2),
                regexp="Invalid setting for PKNCA")
-  ## You cannot give a value without a name.
+  # You cannot give a value without a name.
   expect_error(PKNCA.options(value=5),
                regexp="Cannot have a value without a name")
 
-  ## Cannot both check and default at the same time
   expect_error(PKNCA.options("adj.r.squared.factor", default=TRUE, check=TRUE),
                regexp="Cannot request both default and check")
   
-  ## Confirm that the default state is as expected (setting it first
-  ## in case the tests are run in a non-default state)
+  expect_error(PKNCA.options(adj.r.squared.factor=0.1, default=TRUE, check=TRUE),
+               regexp="Cannot request both default and check")
+  
+  expect_error(PKNCA.options(adj.r.squared.factor=0.1, max.aucinf.pext=15, check=TRUE),
+               regexp="Must give exactly one option to check")
+
+  # Confirm that the default state is as expected (setting it first
+  # in case the tests are run in a non-default state)
   PKNCA.options(default=TRUE)
   expect_equal(PKNCA.options(),
                list(adj.r.squared.factor=0.0001,
                     max.missing=0.5,
                     auc.method="lin up/log down",
+                    conc_above=NA_real_,
                     conc.na="drop",
                     conc.blq=list(
                       first="keep",
@@ -75,9 +81,9 @@ test_that("PKNCA.options", {
                         tmax=c(FALSE, TRUE),
                         cmax=c(FALSE, TRUE)))))
 
-  ## Check all the checks on options
+  # Check all the checks on options
 
-  ## adj.r.squared.factor
+  # adj.r.squared.factor
   expect_error(PKNCA.options(adj.r.squared.factor=c(0.1, 0.9), check=TRUE),
                regexp="adj.r.squared.factor must be a scalar")
   expect_error(PKNCA.options(adj.r.squared.factor=1, check=TRUE),
@@ -91,7 +97,7 @@ test_that("PKNCA.options", {
   expect_warning(PKNCA.options(adj.r.squared.factor=0.9, check=TRUE),
                  regexp="adj.r.squared.factor is usually <0.01")
 
-  ## max.missing
+  # max.missing
   expect_error(PKNCA.options(max.missing=c(1, 2), check=TRUE),
                regexp="max.missing must be a scalar")
   expect_error(PKNCA.options(max.missing="A", check=TRUE),
@@ -107,8 +113,8 @@ test_that("PKNCA.options", {
   expect_warning(PKNCA.options(max.missing=0.6, check=TRUE),
                  regexp="max.missing is usually <= 0.5")
 
-  ## auc.method
-  ## All possible methods
+  # auc.method
+  # All possible methods
   expect_equal(PKNCA.options(auc.method="linear", check=TRUE),
                "linear",
                info="auc.method selection works for linear")
@@ -116,10 +122,10 @@ test_that("PKNCA.options", {
                "lin up/log down",
                info="auc.method selection works for lin up/log down")
   expect_error(PKNCA.options(auc.method="foo", check=TRUE),
-               regex="should be one of",
+               regexp="should be one of",
                info="auc.method is a valid method")
 
-  ## conc.na
+  # conc.na
   expect_equal(PKNCA.options(conc.na="drop", check=TRUE),
                "drop")
   expect_warning(v1 <- PKNCA.options(conc.na=factor("drop"), check=TRUE),
@@ -139,8 +145,8 @@ test_that("PKNCA.options", {
   expect_error(PKNCA.options(conc.na="foo", check=TRUE),
                regexp="conc.na must either be a finite number or the text 'drop'")
 
-  ## conc.blq
-  ## Confirm all types of single-style inputs
+  # conc.blq
+  # Confirm all types of single-style inputs
   expect_equal(PKNCA.options(conc.blq="drop", check=TRUE),
                "drop")
   expect_equal(PKNCA.options(conc.blq="keep", check=TRUE),
@@ -159,7 +165,7 @@ test_that("PKNCA.options", {
   expect_error(PKNCA.options(conc.blq=NA, check=TRUE),
                regexp="conc.blq must not be NA")
 
-  ## Confirm that list-style input also works
+  # Confirm that list-style input also works
   expect_equal(PKNCA.options(conc.blq=list(first="drop", middle=5, last="keep"),
                              check=TRUE),
                list(first="drop", middle=5, last="keep"))
@@ -171,12 +177,12 @@ test_that("PKNCA.options", {
                              check=TRUE),
                regexp="When given as a list, conc.blq must include elements named 'first', 'middle', and 'last'.")
 
-  ## first.tmax
+  # first.tmax
   expect_equal(PKNCA.options(first.tmax=FALSE, check=TRUE),
                FALSE)
   expect_error(PKNCA.options(first.tmax=c(FALSE, TRUE), check=TRUE),
                regexp="first.tmax must be a scalar")
-  ## Conversion works
+  # Conversion works
   expect_warning(v1 <- PKNCA.options(first.tmax="T", check=TRUE),
                  regexp="Converting first.tmax to a logical value: TRUE")
   expect_equal(v1, TRUE)
@@ -188,7 +194,7 @@ test_that("PKNCA.options", {
   expect_error(PKNCA.options(first.tmax="x", check=TRUE),
                regexp="Could not convert first.tmax to a logical value")
 
-  ## min.hl.points
+  # min.hl.points
   expect_equal(PKNCA.options(min.hl.points=3, check=TRUE),
                3)
   expect_error(PKNCA.options(min.hl.points=c(3, 4), check=TRUE),
@@ -201,10 +207,10 @@ test_that("PKNCA.options", {
                regexp="min.hl.points must be >=2")
   expect_warning(v1 <- PKNCA.options(min.hl.points=2.5, check=TRUE),
                  regexp="Non-integer given for min.hl.points; rounding to nearest integer")
-  ## Note that R uses the engineer's rule of rounding
+  # Note that R uses the engineer's rule of rounding
   expect_equal(v1, 2)
 
-  ## min.span.ratio
+  # min.span.ratio
   expect_equal(PKNCA.options(min.span.ratio=2, check=TRUE),
                2)
   expect_error(PKNCA.options(min.span.ratio=0, check=TRUE),
@@ -218,7 +224,7 @@ test_that("PKNCA.options", {
   expect_warning(PKNCA.options(min.span.ratio=1, check=TRUE),
                  regexp="min.span.ratio is usually >= 2")
 
-  ## max.aucinf.pext
+  # max.aucinf.pext
   expect_equal(PKNCA.options(max.aucinf.pext=20, check=TRUE),
                20)
   expect_error(PKNCA.options(max.aucinf.pext=0, check=TRUE),
@@ -234,7 +240,7 @@ test_that("PKNCA.options", {
   expect_warning(PKNCA.options(max.aucinf.pext=0.1, check=TRUE),
                  regexp="max.aucinf.pext is on the percent not ratio scale, value given is <1%")
 
-  ## min.hl.r.squared
+  # min.hl.r.squared
   expect_equal(PKNCA.options(min.hl.r.squared=0.9, check=TRUE),
                0.9)
   expect_error(PKNCA.options(min.hl.r.squared=0, check=TRUE),
@@ -248,7 +254,7 @@ test_that("PKNCA.options", {
   expect_warning(PKNCA.options(min.hl.r.squared=0.89, check=TRUE),
                  regexp="min.hl.r.squared is usually >= 0.9")
 
-  ## tau.choices
+  # tau.choices
   expect_equal(PKNCA.options(tau.choices=NA, check=TRUE),
                NA)
   expect_equal(PKNCA.options(tau.choices=c(1, 2), check=TRUE),
@@ -258,85 +264,170 @@ test_that("PKNCA.options", {
   expect_error(PKNCA.options(tau.choices="x", check=TRUE),
                regexp="tau.choices must be a number")
 
-  ## Reset all options to their default to ensure that any subsequent
-  ## tests work correctly.
+  # Reset all options to their default to ensure that any subsequent
+  # tests work correctly.
   PKNCA.options(default=TRUE)
 })
 
 test_that("PKNCA.choose.option", {
   current.options <- PKNCA.options()
-  ## If nothing is given for the non-default options, the default
-  ## option is returned.
+  # If nothing is given for the non-default options, the default
+  # option is returned.
   expect_equal(PKNCA.choose.option("conc.na"),
                current.options[["conc.na"]])
-  ## If an invalid option is requested, it gives an error
+  # If an invalid option is requested, it gives an error
   expect_error(PKNCA.choose.option("foo"),
                regexp="PKNCA.options does not have value\\(s\\) for foo.")
-  ## It gives an error even if there is a value in the option list.
-  ## Note that the error is different because it checks the passed-in
-  ## options while it just extracts the default options.
+  # It gives an error even if there is a value in the option list.
+  # Note that the error is different because it checks the passed-in
+  # options while it just extracts the default options.
   expect_error(PKNCA.choose.option("foo", options=list(foo="bar")),
                regexp="Invalid setting for PKNCA: foo")
-  ## When given in the options list, it will choose that instead of
-  ## the default value.
+  # When given in the options list, it will choose that instead of
+  # the default value.
   expect_equal(PKNCA.choose.option("max.aucinf.pext",
                                    options=list(max.aucinf.pext=10)),
                10)
-  ## When multiple values are given in the options, it chooses the
-  ## right one and ignores all the others (so invalid options can be
-  ## listed as long as they are not used).
+  # When multiple values are given in the options, it chooses the
+  # right one and ignores all the others (so invalid options can be
+  # listed as long as they are not used).
   expect_equal(PKNCA.choose.option("max.aucinf.pext",
                                    options=list(
                                      foo="bar",
                                      max.aucinf.pext=10)),
                10)
+  
+  # Manage NULL and the "value" argument
+  expect_equal(PKNCA.choose.option("single.dose.aucs"),
+               PKNCA.options(name="single.dose.aucs"),
+               info="PKNCA.choose.option gives the default option when nothing else is given")
+  expect_equal(PKNCA.choose.option("single.dose.aucs",
+                                   options=list(single.dose.aucs=data.frame(start=0, end=1, cmax=TRUE))),
+               check.interval.specification(data.frame(start=0, end=1, cmax=TRUE)),
+               info="PKNCA.choose.option gives the default option when nothing else is given")
+  expect_equal(PKNCA.choose.option("single.dose.aucs",
+                                   value=data.frame(start=0, end=1, cmax=TRUE, tmax=TRUE),
+                                   options=list(single.dose.aucs=data.frame(start=0, end=1, cmax=TRUE))),
+               check.interval.specification(data.frame(start=0, end=1, cmax=TRUE, tmax=TRUE)),
+               info="PKNCA.choose.option gives the default option when nothing else is given")
+  expect_equal(PKNCA.choose.option("single.dose.aucs",
+                                   value=NULL,
+                                   options=list(single.dose.aucs=data.frame(start=0, end=1, cmax=TRUE))),
+               check.interval.specification(data.frame(start=0, end=1, cmax=TRUE)),
+               info="PKNCA.choose.option gives the default option when nothing else is given")
 })
 
 context("PKNCA summary setting")
 
-test_that(
-  "PKNCA.set.summary input checking",
-  {
-    ## Get the current state to reset it at the end
-    initial.summary.set <- PKNCA.set.summary()
-    PKNCA.set.summary(reset=TRUE)
-    ## Confirm that reset actually resets the summary settings
-    expect_equal(PKNCA.set.summary(), list())
+test_that("PKNCA.set.summary input checking", {
+  # Get the current state to reset it at the end
+  initial.summary.set <- PKNCA.set.summary()
+  PKNCA.set.summary(reset=TRUE)
+  # Confirm that reset actually resets the summary settings
+  expect_equal(PKNCA.set.summary(), list())
     
-    ## name must already be defined
-    expect_error(PKNCA.set.summary("blah"),
-                 regexp="You must first define the parameter name with add.interval.col")
-    ## point must be a function
-    expect_error(PKNCA.set.summary("auclast", point="a"),
-                 regexp="point must be a function")
-    ## spread must be a function
-    expect_error(PKNCA.set.summary("auclast", point=mean, spread="a"),
-                 regexp="spread must be a function")
-    ## Rounding must either be a function or a list
-    expect_error(PKNCA.set.summary("auclast", point=mean, spread=sd,
-                                   rounding="a"),
-                 regexp="rounding must be either a list or a function")
-    expect_error(PKNCA.set.summary("auclast", point=mean, spread=sd,
-                                   rounding=list(foo=3, bar=4)),
-                 regexp="rounding must have a single value in the list")
-    expect_error(PKNCA.set.summary("auclast", point=mean, spread=sd,
-                                   rounding=list(foo=3)),
-                 regexp="When a list, rounding must have a name of either 'signif' or 'round'")
-    ## An initial setting works
-    expect_equal(PKNCA.set.summary("auclast", point=mean, spread=sd,
-                                   rounding=round),
-                 list(auclast=list(point=mean, spread=sd, rounding=round)))
-    ## Changing a setting works
-    expect_equal(PKNCA.set.summary("auclast", point=mean, spread=sd,
-                                   rounding=list(round=2)),
-                 list(auclast=list(point=mean, spread=sd,
-                        rounding=list(round=2))))
+  # name must already be defined
+  expect_error(PKNCA.set.summary("blah"),
+               regexp="You must first define the parameter name with add.interval.col")
+  # point must be a function
+  expect_error(PKNCA.set.summary("auclast", description="A", point="a"),
+               regexp="`point` must be a function")
+  # description is required and must be a scalar character string
+  expect_error(
+    PKNCA.set.summary("auclast", description=1),
+    regexp="`description` must be a character string",
+    fixed=TRUE
+  )
+  expect_error(
+    PKNCA.set.summary("auclast", description=c("A", "B")),
+    regexp="`description` must be a scalar.",
+    fixed=TRUE
+  )
+  expect_error(PKNCA.set.summary("auclast", description=1))
+  # spread must be a function
+  expect_error(PKNCA.set.summary("auclast", description="A", point=mean, spread="a"),
+               regexp="spread must be a function")
+  # Rounding must either be a function or a list
+  expect_error(PKNCA.set.summary("auclast", description="A", point=mean, spread=sd,
+                                 rounding="a"),
+               regexp="rounding must be either a list or a function")
+  expect_error(PKNCA.set.summary("auclast", description="A", point=mean, spread=sd,
+                                 rounding=list(foo=3, bar=4)),
+               regexp="rounding must have a single value in the list")
+  expect_error(PKNCA.set.summary("auclast", description="A", point=mean, spread=sd,
+                                 rounding=list(foo=3)),
+               regexp="When a list, rounding must have a name of either 'signif' or 'round'")
+  # An initial setting works
+  expect_equal(
+    PKNCA.set.summary(
+      "auclast", description="A", point=mean, spread=sd,
+      rounding=round),
+    list(auclast=
+           list(
+             description = "A",
+             point=mean,
+             spread=sd,
+             rounding=round
+           )
+    )
+  )
+  # Changing a setting works
+  expect_equal(PKNCA.set.summary("auclast", description="A", point=mean, spread=sd,
+                                 rounding=list(round=2)),
+               list(auclast=list(description="A", point=mean, spread=sd,
+                                 rounding=list(round=2))))
+  # Changing a vector of settings works
+  PKNCA.set.summary(reset=TRUE)
+  expect_equal(
+    PKNCA.set.summary(
+      name=c("cmax", "auclast"),
+      description="A",
+      point=mean, spread=sd,
+      rounding=list(round=2)
+    ),
+    list(cmax=
+           list(
+             description="A",
+             point=mean, spread=sd,
+             rounding=list(round=2)
+           ),
+         auclast=
+           list(
+             description="A",
+             point=mean, spread=sd,
+             rounding=list(round=2)
+           )
+    )
+  )
 
-    ## Reset all the values to the defaults
-    PKNCA.set.summary(reset=TRUE)
-    for (n in names(initial.summary.set)) {
-      tmp <- initial.summary.set[[n]]
-      tmp$name <- n
-      do.call(PKNCA.set.summary, tmp)
-    }
-  })
+  # Reset all the values to the defaults
+  PKNCA.set.summary(reset=TRUE)
+  for (n in names(initial.summary.set)) {
+    tmp <- initial.summary.set[[n]]
+    tmp$name <- n
+    do.call(PKNCA.set.summary, tmp)
+  }
+})
+
+test_that("PKNCA.set.summary exists for all paramters", {
+  missing_summaries <-
+    setdiff(setdiff(names(get.interval.cols()),
+                    names(PKNCA.set.summary())),
+            c("start", "end"))
+  expect_true(length(missing_summaries) == 0,
+              info="All parameters have summary functions")
+})
+
+test_that("PKNCA.options.describe", {
+  expect_equal(PKNCA:::PKNCA.options.describe("adj.r.squared.factor"),
+               PKNCA:::.PKNCA.option.check[["adj.r.squared.factor"]](description=TRUE),
+               info="Option descriptions are provided accurately.")
+})
+
+test_that("PKNCA.options fails when setting defaults and another option simultaneously", {
+  expect_error(
+    PKNCA.options(default=TRUE, tau.choices=24),
+    regexp="Cannot set default and set new options at the same time.",
+    fixed=TRUE
+  )
+})

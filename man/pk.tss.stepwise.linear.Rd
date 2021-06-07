@@ -5,10 +5,17 @@
 \title{Compute the time to steady state using stepwise test of linear
 trend}
 \usage{
-pk.tss.stepwise.linear(..., min.points = 3, level = 0.95, verbose = FALSE,
-  check = TRUE)
+pk.tss.stepwise.linear(
+  ...,
+  min.points = 3,
+  level = 0.95,
+  verbose = FALSE,
+  check = TRUE
+)
 }
 \arguments{
+\item{\dots}{See \code{\link{pk.tss.data.prep}}}
+
 \item{min.points}{The minimum number of points required for the fit}
 
 \item{level}{The confidence level required for assessment of
@@ -19,8 +26,6 @@ the model (passed to the nlme function), and additional details
 while running.}
 
 \item{check}{See \code{\link{pk.tss.data.prep}}}
-
-\item{\dots}{See \code{\link{pk.tss.data.prep}}}
 }
 \value{
 A scalar float for the first time when steady-state is
@@ -28,7 +33,7 @@ achieved or \code{NA} if it is not observed.
 }
 \description{
 A linear slope is fit through the data to find when it becomes
-non-significant.  Note that this is less preferrred than the
+non-significant.  Note that this is less preferred than the
 \code{pk.tss.monoexponential} due to the fact that with more time
 or more subjects the performance of the test changes (see
 reference).
@@ -44,6 +49,8 @@ Estimating Time to Steady State with Examples from Phase 1 Studies.
 AAPS Journal 10(1):141-7. doi:10.1208/s12248-008-9014-y
 }
 \seealso{
-\code{\link{pk.tss.monoexponential}}
+Other Time to steady-state calculations: 
+\code{\link{pk.tss.monoexponential}()},
+\code{\link{pk.tss}()}
 }
-
+\concept{Time to steady-state calculations}

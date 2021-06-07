@@ -2,22 +2,31 @@
 % Please edit documentation in R/general.functions.R
 \name{roundString}
 \alias{roundString}
-\title{Round a value to a defined number of digits printing out trailing
-zeros, if applicable.}
+\title{Round a value to a defined number of digits printing out trailing zeros, if
+applicable.}
 \usage{
-roundString(x, digits = 0)
+roundString(x, digits = 0, sci_range = Inf, sci_sep = "e", si_range)
 }
 \arguments{
 \item{x}{The number to round}
 
 \item{digits}{integer indicating the number of decimal places}
+
+\item{sci_range}{See help for \code{\link{signifString}} (and you likely want
+to round with \code{signifString} if you want to use this argument)}
+
+\item{sci_sep}{The separator to use for scientific notation strings
+(typically this will be either "e" or "x10^" for computer- or
+human-readable output).}
+
+\item{si_range}{Deprecated, please use \code{sci_range}}
 }
 \value{
 A string with the value
 }
 \description{
-Round a value to a defined number of digits printing out trailing
-zeros, if applicable.
+Round a value to a defined number of digits printing out trailing zeros, if
+applicable.
 }
 \details{
 Values that are not standard numbers like \code{Inf}, \code{NA}, and
@@ -26,4 +35,3 @@ Values that are not standard numbers like \code{Inf}, \code{NA}, and
 \seealso{
 \code{\link{round}}, \code{\link{signifString}}
 }
-

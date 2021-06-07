@@ -1,14 +1,14 @@
-<!--
-%\VignetteEngine{knitr::rmarkdown}
-%\VignetteIndexEntry{Introduction to PKNCA and Usage Instructions}
--->
 ---
 title: "Introduction to PKNCA and Usage Instructions"
 author: "Bill Denney"
 output:
-  html_document:
-    toc: true
-    toc_depth: 2
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 6
+vignette: >
+  %\VignetteIndexEntry{Introduction to PKNCA and Usage Instructions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, echo=FALSE, include=FALSE}
@@ -33,35 +33,46 @@ library will be discussed in a separate vignette.
 The simplest analysis requires concentration and dosing data, then
 five function calls can provide summarized results.  (Please note that this and the other examples in this document are intended to show the typical workflow, but they are not intended to run directly.  For an example to run directly, please see [the theophylline example](Example-theophylline.html).)
 
-```{r eval=FALSE}
+```{r setup_data}
 library(PKNCA)
+library(dplyr, quietly=TRUE)
 
 ## Load the PK concentration data
-d.conc <- read.csv("concentration.csv", stringsAsFactors=FALSE)
-## Load the dosing data
-d.dose <- read.csv("dose.csv", stringsAsFactors=FALSE)
+d_conc <-
+  as.data.frame(datasets::Theoph) %>%
+  mutate(Subject=as.numeric(as.character(Subject)))
+## Generate the dosing data
+d_dose <- d_conc[d_conc$Time == 0,]
+d_dose$Time <- 0
 
-## Create a concentration object specifying the concentration, time,
-## study, and subject columns.  (Note that any number of grouping
-## levels is supporting; you are not restricted to this list.)
-my.conc <- PKNCAconc(d.conc,
-                     concentration~time|study+subject)
-## Create a dosing object specifying the dose, time, study, and
-## subject columns.  (Note that the grouping factors should be a
-## subset of the grouping factors for concentration, and the columns
-## must have the same names between concentration and dose objects.)
-my.dose <- PKNCAdose(d.dose,
-                     dose~time|study+subject)
+## Create a concentration object specifying the concentration, time, and
+## subject columns.  (Note that any number of grouping levels is
+## supported; you are not restricted to just grouping by subject.)
+conc_obj <-
+  PKNCAconc(
+    d_conc,
+    conc~Time|Subject
+  )
+## Create a dosing object specifying the dose, time, and subject
+## columns.  (Note that the grouping factors should be the same as or a
+## subset of the grouping factors for concentration, and the grouping
+## columns must have the same names between concentration and dose
+## objects.)
+dose_obj <-
+  PKNCAdose(
+    d_dose,
+    Dose~Time|Subject
+  )
 ## Combine the concentration and dosing information both to
 ## automatically define the intervals for NCA calculation and provide
 ## doses for calculations requiring dose.
-my.data <- PKNCAdata(my.conc, my.dose)
+data_obj <- PKNCAdata(conc_obj, dose_obj)
 
 ## Calculate the NCA parameters
-my.results <- pk.nca(my.data)
+results_obj <- pk.nca(data_obj)
 
 ## Summarize the results
-summary(my.results)
+summary(results_obj)
 ```
 
 # Data Handling
@@ -71,7 +82,7 @@ requirements are that concentration, dose, and time must all be
 numeric (and not factors).  Grouping variables have no specific
 requirements; they can be any mode.
 
-Values below the limit of quantificaiton are coded as zeros (`0`), and missing values are coded as `NA`.
+Values below the limit of quantification are coded as zeros (`0`), and missing values are coded as `NA`.
 
 # Options: Make PKNCA Work Your Way
 
@@ -137,6 +148,36 @@ If the functions or default rounding options provided in the library
 do not meet the summarization needs, a user-supplied function can be
 used for rounding.
 
+```{r custom_summary_fun, eval=FALSE}
+median_na <- function(x) {
+  median(x, na.rm=TRUE)
+}
+quantprob_na <- function(x) {
+  quantile(x, probs=c(0.05, 0.95), na.rm=TRUE)
+}
+PKNCA.set.summary(name="auclast",
+                  point=median_na,
+                  spread=quantprob_na,
+                  rounding=list(signif=3))
+```
+
+In some cases multiple parameters may need the same summary functions
+(as often occurs with simulated data).  Many parameters can be set
+simultaneously by specifying a vector of `name`s.
+
+```{r multi_summary_settings, eval=FALSE}
+median_na <- function(x) {
+  median(x, na.rm=TRUE)
+}
+quantprob_na <- function(x) {
+  quantile(x, probs=c(0.05, 0.95), na.rm=TRUE)
+}
+PKNCA.set.summary(name=c("auclast", "cmax", "tmax", "half.life", "aucinf.pred"),
+                  point=median_na,
+                  spread=quantprob_na,
+                  rounding=list(signif=3))
+```
+
 # Grouping NCA Data
 
 As described in the [quick start](#quick-start), concentration and dose
@@ -155,23 +196,41 @@ to be the subject, and as noted before, the subject is (by default)
 excluded from the summary grouping (so that summaries are grouped by
 study, treatment, etc., but not by subject).
 
-```{r eval=FALSE}
+```{r grouping, eval=FALSE}
+## Generate a faux multi-study, multi-analyte dataset.
+d_conc_parent <- d_conc
+d_conc_parent$Subject <- as.numeric(as.character(d_conc_parent$Subject))
+d_conc_parent$Study <- d_conc_parent$Subject <= 6
+d_conc_parent$Analyte <- "Parent"
+d_conc_metabolite <- d_conc_parent
+d_conc_metabolite$conc <- d_conc_metabolite$conc/2
+d_conc_metabolite$Analyte <- "Metabolite"
+d_conc_both <- rbind(d_conc_parent, d_conc_metabolite)
+d_conc_both <- d_conc_both[with(d_conc_both, order(Study, Subject, Time, Analyte)),]
+d_dose_both <- d_conc_both[d_conc_both$Time == 0 & d_conc_both$Analyte %in% "Parent",
+                           c("Study", "Subject", "Dose", "Time")]
+
 ## Create a concentration object specifying the concentration, time,
 ## study, and subject columns.  (Note that any number of grouping
 ## levels is supporting; you are not restricted to this list.)
-my.conc <- PKNCAconc(d.conc,
-                     concentration~time|study+subject/analyte)
+conc_obj <- PKNCAconc(d_conc_both,
+                      conc~Time|Study+Subject/Analyte)
 ## Create a dosing object specifying the dose, time, study, and
 ## subject columns.  (Note that the grouping factors should be a
 ## subset of the grouping factors for concentration, and the columns
 ## must have the same names between concentration and dose objects.)
-my.dose <- PKNCAdose(d.dose,
-                     dose~time|study+subject)
+dose_obj <- PKNCAdose(d_dose_both,
+                     Dose~Time|Study+Subject)
+
+# Perform and summarize the PK data as previously described
+data_obj <- PKNCAdata(conc_obj, dose_obj)
+results_obj <- pk.nca(data_obj)
+summary(results_obj)
 ```
 
 # Selecting Calculation Intervals
 
-All NCA calculations require the inverval over which they are
+All NCA calculations require the interval over which they are
 calculated.  When the concentration and dosing information are
 combined to the PKNCAdata object, intervals are automatically
 determined.  The exception to this automatic determination is if the
@@ -192,7 +251,7 @@ intervals <-
              aucinf.obs=c(FALSE, TRUE))
 ```
 
-Intervals like the above is sufficient for designs with a single type of treatment-- like single doses.  For more complex treatments in a single analysis, like the combination of single and multiple doses, include a treatment column matching the treatment column name from the concentration data set.  See the [Manual Interval Specification](manual-interval-specification) section below for more details.
+Intervals like the above is sufficient for designs with a single type of treatment-- like single doses.  For more complex treatments in a single analysis, like the combination of single and multiple doses, include a treatment column matching the treatment column name from the concentration data set.  See the [Manual Interval Specification](#manual-interval-specification) section below for more details.
 
 ## Selection of Data Used for Calculation
 
@@ -210,19 +269,19 @@ Single dose data has a simple interval selection:  the option `single.dose.aucs`
 knitr::kable(PKNCA.options()$single.dose.aucs)
 ```
 
-For multiple-dose studies, PKNCA selects one group at a time and compares the concentration and dosing times.  When there is a concentation measurement between doses, an interval row is added.  The dosing interval ($\tau$) is determined by looking for pattern repeats within the dosing data using the `find.tau` function.
+For multiple-dose studies, PKNCA selects one group at a time and compares the concentration and dosing times.  When there is a concentration measurement between doses, an interval row is added.  The dosing interval ($\tau$) is determined by looking for pattern repeats within the dosing data using the `find.tau` function.
 
 ```{r}
 ## find.tau can work when all doses have the same interval...
-dose.times <- seq(0, 168, by=24)
-print(dose.times)
-PKNCA::find.tau(dose.times)
+dose_times <- seq(0, 168, by=24)
+print(dose_times)
+PKNCA::find.tau(dose_times)
 
 ## or when the doses have mixed intervals (10 and 24 hours).
-dose.times <- sort(c(seq(0, 168, by=24),
+dose_times <- sort(c(seq(0, 168, by=24),
                      seq(10, 178, by=24)))
-print(dose.times)
-PKNCA::find.tau(dose.times)
+print(dose_times)
+PKNCA::find.tau(dose_times)
 ```
 
 After finding $\tau$, PKNCA will also look after the last dose (or the beginning of the last dosing interval), and two additional intervals may be added:
@@ -239,21 +298,21 @@ Intervals can also be specified manually.  Two use cases are common for manual s
 Fully manual intervals can be specified by providing it to the `PKNCAdata` call.
 
 ```{r eval=FALSE}
-my.intervals <-
+intervals_manual <-
   data.frame(start=0, end=c(24, Inf),
              cmax=c(FALSE, TRUE),
              tmax=c(FALSE, TRUE),
              auclast=TRUE,
              aucinf.obs=c(FALSE, TRUE))
-my.data <- PKNCAdata(my.conc, my.dose, 
-                     intervals=my.intervals)
+data_obj <- PKNCAdata(conc_obj, dose_obj, 
+                      intervals=intervals_manual)
 ```
 
 To update the automatically-selected intervals, extract the intervals, modify them, and put them back.
 
 ```{r eval=FALSE}
-my.data <- PKNCAdata(my.conc, my.dose)
-my.intervals <- my.data$intervals
-my.intervals$aucinf.obs[1] <- TRUE
-mydata$intervals <- my.intervals
+data_obj <- PKNCAdata(conc_obj, dose_obj)
+intervals_manual <- data_obj$intervals
+intervals_manual$aucinf.obs[1] <- TRUE
+data_obj$intervals <- intervals_manual
 ```

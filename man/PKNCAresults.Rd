@@ -4,7 +4,7 @@
 \alias{PKNCAresults}
 \title{Generate a PKNCAresults object}
 \usage{
-PKNCAresults(result, data, provenance)
+PKNCAresults(result, data, exclude)
 }
 \arguments{
 \item{result}{a data frame with NCA calculation results and groups.
@@ -13,13 +13,22 @@ name of an NCA parameter.}
 
 \item{data}{The PKNCAdata used to generate the result}
 
-\item{provenance}{Data and calculation provenance}
+\item{exclude}{(optional) The name of a column with concentrations to
+exclude from calculations and summarization.  If given, the column 
+should have values of \code{NA} or \code{""} for concentrations to
+include and non-empty text for concentrations to exclude.}
 }
 \value{
 A PKNCAresults object with each of the above within.
 }
 \description{
 This function should not be run directly.  The object is created
-for summarization and plotting.
+for summarization.
 }
-
+\seealso{
+Other PKNCA objects: 
+\code{\link{PKNCAconc}()},
+\code{\link{PKNCAdata}()},
+\code{\link{PKNCAdose}()}
+}
+\concept{PKNCA objects}

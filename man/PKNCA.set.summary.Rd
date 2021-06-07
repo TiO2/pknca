@@ -4,12 +4,21 @@
 \alias{PKNCA.set.summary}
 \title{Define how NCA parameters are summarized.}
 \usage{
-PKNCA.set.summary(name, point, spread, rounding = list(signif = 3),
-  reset = FALSE)
+PKNCA.set.summary(
+  name,
+  description,
+  point,
+  spread,
+  rounding = list(signif = 3),
+  reset = FALSE
+)
 }
 \arguments{
-\item{name}{The parameter name.  It must have already been defined
-(see \code{\link{add.interval.col}}).}
+\item{name}{The parameter name or a vector of parameter names.  It
+must have already been defined (see
+\code{\link{add.interval.col}}).}
+
+\item{description}{A single-line description of the summary}
 
 \item{point}{The function to calculate the point estimate for the
 summary.  The function will be called as \code{point(x)} and must
@@ -20,13 +29,13 @@ variability).  The function will be called as \code{spread(x)} and
 must return a scalar or two-long vector (typically a number, NA, or
 a string).}
 
-\item{rounding}{Instructions for how to round the value of point
-and spread.  It may either be a list or a function.  If it is a
-list, then it must have a single entry with a name of either
-"signif" or "round" and a value of the digits to round.  If a
-function, it is expected to return a scalar number or character
-string with the correct results for an input of either a scalar or
-a two-long vector.}
+\item{rounding}{Instructions for how to round the value of point and
+spread.  It may either be a list or a function.  If it is a list,
+then it must have a single entry with a name of either "signif" or
+"round" and a value of the digits to round.  If a function, it is
+expected to return a scalar number or character string with the
+correct results for an input of either a scalar or a two-long
+vector.}
 
 \item{reset}{Reset all the summary instructions}
 }
@@ -36,7 +45,22 @@ All current summary settings (invisibly)
 \description{
 Define how NCA parameters are summarized.
 }
+\examples{
+\dontrun{
+PKNCA.set.summary(
+  name="half.life",
+  description="arithmetic mean and standard deviation",
+  point=business.mean,
+  spread=business.sd,
+  rounding=list(signif=3)
+)
+}
+}
 \seealso{
 \code{\link{summary.PKNCAresults}}
-}
 
+Other PKNCA calculation and summary settings: 
+\code{\link{PKNCA.choose.option}()},
+\code{\link{PKNCA.options}()}
+}
+\concept{PKNCA calculation and summary settings}
